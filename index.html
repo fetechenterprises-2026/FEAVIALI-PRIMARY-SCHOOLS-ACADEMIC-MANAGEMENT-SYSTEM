@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FEAVIAL PRIMARY PRO MAX — Enhanced Edition</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--main:#0f3d2e;--gold:#d4af37}*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+.hidden{display:none!important}.btn{background:var(--main);color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:12px}.btn-gold{background:var(--gold);color:#000}.btn-sm{padding:5px 9px;font-size:11px}
+input,select,textarea{width:100%;padding:7px;border:1px solid #ccc;border-radius:6px;margin:3px 0;font-size:12px}label{font-size:11px;font-weight:bold}
+.card{background:#fff;border-radius:12px;padding:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:8px}
+table{width:100%;border-collapse:collapse}th,td{border:1px solid #000;padding:3px 4px;font-size:10px}th{background:#ddd;font-size:9px}
+#masterLock{position:fixed;top:0;left:0;width:100%;height:100%;background:#0f3d2e;z-index:99999;display:flex;align-items:center;justify-content:center}
+#loginPage{height:100vh;display:flex;align-items:center;justify-content:center;background:var(--main)}.loginBox{background:#fff;padding:20px;border-radius:14px;width:92%;max-width:400px}
+.dash{display:grid;grid-template-columns:220px 1fr;min-height:100vh}.sidebar{background:var(--main);color:#fff;padding:8px;overflow-y:auto;height:100vh}.sidebar button{width:100%;text-align:left;background:transparent;color:#fff;border:none;padding:7px;border-radius:5px;cursor:pointer;margin:1px 0;font-size:11px}.sidebar button.active{background:rgba(255,255,255,.18);border-left:3px solid var(--gold)}
+.main{padding:8px;overflow:auto;background:#eef3ee}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.report-paper{background:#fff;width:210mm;min-height:297mm;padding:6mm 8mm;margin:10px auto;color:#000;font-size:10px;border:1.5px solid #000;line-height:1.3;position:relative;overflow:hidden}
+.report-header{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #000;padding-bottom:4px;text-align:center;position:relative;z-index:1}
+.student-centered{text-align:center;margin:6px 0;line-height:1.5;background:#f9f9f9;padding:5px;border:1px solid #ccc;border-radius:4px;position:relative;z-index:1;font-size:10px}
+.watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:0.10;width:55%;pointer-events:none;z-index:0}.watermark img{width:100%}
+.qr-box{position:absolute;bottom:8mm;right:8mm;width:22mm;height:22mm;border:1px solid #000;padding:1mm;background:#fff;z-index:2}
+.perf-sheet{background:#fff;width:297mm;min-height:210mm;padding:6mm;margin:10px auto;color:#000;font-size:9px;border:1px solid #000}
+@media print{@page{size:A4;margin:4mm}body *{visibility:hidden}.report-paper, .report-paper *, .perf-sheet, .perf-sheet *{visibility:visible}.report-paper{width:210mm;min-height:297mm;padding:6mm 8mm;margin:0;position:absolute;left:0;top:0;page-break-after:always;border:none;transform:scale(0.96);transform-origin:top left}.perf-sheet{position:absolute;left:0;top:0;margin:0;width:297mm;page-break-after:always;border:none}}
+
+@media(max-width:800px){.dash{grid-template-columns:1fr}.sidebar{height:auto;max-height:none;position:relative}.sidebar button{width:auto;display:inline-block}.main{min-width:0}.grid2,.grid3{grid-template-columns:1fr}.report-paper,.perf-sheet{width:100%;min-height:0;overflow:visible}.qr-box{position:static;margin:8px auto}}
+@media print{.sidebar,#loginPage,#masterLock{display:none!important}.report-paper{width:100%;min-height:0;transform:none;position:relative}.perf-sheet{width:100%;min-height:0;position:relative}}
+
+.report-paper{position:relative;overflow:hidden;page-break-after:always;}
+.primary-document-paper{background:#fff;color:#111;padding:12mm;margin:8px auto;max-width:190mm;min-height:220mm;border:1px solid #bbb;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+.primary-document-paper table,.primary-sheet{width:100%;border-collapse:collapse;}
+.primary-document-paper th,.primary-document-paper td,.primary-sheet th,.primary-sheet td{border:1px solid #333;padding:5px;font-size:10px;}
+.primary-document-paper th,.primary-sheet th{background:#e8eef3;}
+@media print{body.print-primary-doc #app>*:not(#page-documents){display:none!important}body.print-primary-doc #page-documents>*:not(#pd_output){display:none!important}body.print-primary-doc #pd_output{display:block!important}body.print-primary-doc .primary-document-paper{box-shadow:none;border:0;margin:0;max-width:none;page-break-after:always} }
+</style><link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f2a5a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+</head>
+<body>
+<div id="masterLock"><div style="background:#fff;padding:22px;border-radius:14px;width:92%;max-width:380px;text-align:center"><h3 style="color:#0f3d2e">FEAVIAL PRIMARY PRO MAX</h3><p style="font-size:11px;margin:6px 0">Enter Access Credential<br><small style="color:gray">Merchant 32828705 - UGX 300,000</small></p><input id="masterPassInput" type="password" placeholder="Enter Credential" style="text-align:center;font-weight:bold"><button class="btn" style="width:100%;margin-top:8px" onclick="checkMaster()">Unlock</button><p id="masterError" style="color:red;font-size:10px;margin-top:6px;display:none"></p><p style="font-size:9px;margin-top:10px;color:gray">Need Access? WhatsApp 0783018954<br>Merchant 32828705 | 300k + 100k Support</p></div></div>
+
+<div id="loginPage" class="hidden">
+  <div class="loginBox" id="setupBox"><h3 style="text-align:center;color:#0f3d2e">Create Accounts</h3>
+    <label>Secretary Username</label><input id="setupUser" value="secretary">
+    <label>Secretary Password</label><input id="setupPass" type="password" placeholder="e.g. kikatsi123">
+    <label>DOS Password</label><input id="setupDOSPass" type="password" placeholder="e.g. dos123">
+    <label>Headteacher Password</label><input id="setupHTPass" type="password" placeholder="e.g. ht123">
+    <button class="btn" style="width:100%;margin-top:8px" onclick="doSetup()">Create All & Save</button></div>
+  <div class="loginBox hidden" id="loginBox"><h3 style="text-align:center">FEAVIAL PRIMARY Login</h3>
+    <label>Role</label><select id="loginRole"><option>Secretary</option><option>DOS</option><option>Headteacher</option></select>
+    <label>Username (Secretary only)</label><input id="loginUser" value="secretary">
+    <label>Password</label><input id="loginPass" type="password">
+    <button class="btn" style="width:100%;margin-top:8px" onclick="doLogin()">Login</button>
+    <p style="font-size:10px;text-align:center;color:blue;margin-top:6px;cursor:pointer" onclick="resetSystem()">Reset All Data</p>
+  </div>
+</div>
+
+<div id="app" class="hidden"><div class="dash"><div class="sidebar">
+<h3 style="font-size:11px">FEAVIAL<br>PRIMARY MAX</h3><small id="roleBadge" style="background:#d4af37;color:#000;padding:2px 6px;border-radius:4px;font-size:9px"></small>
+<button class="active" onclick="showPage('dashboard',this)">📊 Dashboard</button>
+<button onclick="showPage('students',this)">👨‍🎓 Pupils</button>
+<button onclick="showPage('staff',this)">👨‍🏫 Staff & Subs</button>
+<button onclick="showPage('marks',this)">📝 Marks 100</button>
+<button onclick="showPage('requirements',this)">📋 Requirements</button>
+<button onclick="showPage('comments',this)">💬 Comments</button>
+<button onclick="showPage('fees',this)">💰 Fees</button>
+<button onclick="showPage('attendance',this)">📅 Attendance</button>
+<button onclick="showPage('analysis',this)">📈 Analysis</button>
+<button onclick="showPage('school',this)">🏫 School Info</button>
+<button onclick="showPage('documents',this)">📑 Documents & Worksheets</button>
+<button onclick="showPage('reports',this)">📄 Report + QR</button>
+<button onclick="showPage('bulk',this)">🖨️ PRINT ALL</button>
+<button onclick="showPage('backup',this)" style="border:1px dashed #d4af37">💾 Backup / Pay</button>
+<button onclick="showPage('audit',this)">📋 Audit</button>
+<button onclick="showPage('help',this)" style="background:#fff;color:#0f3d2e;font-weight:bold">❓ HELP</button>
+<hr style="margin:6px 0;opacity:.3"><button onclick="logout()">Logout</button>
+<div style="font-size:8px;margin-top:6px" id="sideSchool"></div>
+</div><div class="main">
+
+<div id="page-dashboard"><h2>Dashboard - Primary P1-P7 + Baby-Top</h2>
+<div class="grid3" style="margin-top:6px"><div class="card"><h3 id="stCount">0</h3><small>Pupils</small></div><div class="card"><h3 id="sfCount">0</h3><small>Staff</small></div><div class="card"><h3 id="sbCount">0</h3><small>Subjects</small></div></div>
+<div class="grid2">
+<div class="card"><h4>Class Average (EOT)</h4><canvas id="classAvgChart" height="200"></canvas></div>
+<div class="card"><h4>Division (Aggregate)</h4><canvas id="divChart" height="200"></canvas></div>
+</div>
+<div class="grid2">
+<div class="card"><h4>Fees Summary</h4><div id="feesSummary" style="font-size:11px"></div></div>
+<div class="card"><h4>Attendance Summary</h4><div id="attSummary" style="font-size:11px"></div></div>
+</div>
+</div>
+
+<div id="page-students" class="hidden"><h2>Pupils - Baby to P7</h2><div class="card"><div class="grid2"><div><label>Name</label><input id="s_name"><label>LIN / NIN</label><input id="s_lin"><label>Admission</label><input id="s_adm"></div><div><label>Gender</label><select id="s_gender"><option>Male</option><option>Female</option></select><label>Class</label><select id="s_class"><option>Baby Class</option><option>Middle Class</option><option>Top Class</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>P7</option></select><label>Level Auto</label><input id="s_level" disabled></div></div><label>Passport</label><input type="file" id="s_photo" accept="image/*"><div style="background:#fff8e1;padding:6px;border-radius:6px;margin:6px 0;font-size:10px"><b>Note:</b> All subjects are compulsory, no subject codes. Marks out of 100. EOT determines position.</div><button class="btn" onclick="addStudent()">Add Pupil</button></div>
+<div class="card"><h4>Excel + Promote</h4><div style="display:flex;gap:4px;flex-wrap:wrap"><input type="file" id="excelStudent" accept=".xlsx,.xls,.csv"><button class="btn btn-sm" onclick="importStudentsExcel()">Import</button><button class="btn btn-sm btn-gold" onclick="exportStudentsExcel()">Export</button><button class="btn btn-sm" onclick="downloadSampleStudents()">Sample</button><button class="btn btn-sm" style="background:#0f3d2e;color:#fff" onclick="promoteAllPassed()">Promote All Passed</button></div></div><div class="card"><table id="tblStudents"></table></div></div>
+
+<div id="page-staff" class="hidden"><h2>Staff & Subjects - No Codes</h2><div class="grid2"><div class="card"><h4>📚 Subjects - Primary</h4><div style="display:flex;gap:3px;flex-wrap:wrap"><button class="btn btn-sm" onclick="addSubjectPack('PRE')" style="background:#e8f5e9;color:#0f3d2e">+ Pre-Primary</button><button class="btn btn-sm" onclick="addSubjectPack('LOWER')" style="background:#e3f2fd;color:#0f3d2e">+ Lower P1-P3</button><button class="btn btn-sm btn-gold" onclick="addSubjectPack('UPPER')">+ Upper P4-P7</button></div><label>Name</label><input id="sub_name" placeholder="e.g. English"><button class="btn btn-sm" onclick="addSubject()" style="margin-top:4px">Add Subject</button><table id="tblSubjects" style="margin-top:6px"></table></div><div class="card"><h4>👨‍🏫 Staff</h4><label>Name</label><input id="st_name" oninput="autoInitials()"><label>Initials</label><input id="st_initials" style="background:#fff8e1;font-weight:bold"><div style="border:1px solid #d4af37;border-radius:6px;padding:6px;background:#fff8e1;margin:4px 0"><label>Class Teacher Of (ONE)</label><select id="st_class_teacher_of"><option value="">-- Not --</option><option>Baby Class</option><option>Middle Class</option><option>Top Class</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>P7</option></select></div><label>Teaching Classes</label><select id="st_class" multiple style="height:90px;background:#eef6ff"><option value="ALL">ALL</option><option>Baby Class</option><option>Middle Class</option><option>Top Class</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>P7</option></select><label>Subjects (Max 3/class)</label><select id="st_subs_select" multiple style="height:90px;background:#f9fff9"></select><small id="subjectLimitHint" style="font-size:9px;color:green"></small><input id="st_subs" type="hidden"><label>Roles</label><div style="border:1px solid #ccc;border-radius:6px;padding:6px;display:grid;grid-template-columns:1fr 1fr;gap:3px;font-size:10px"><label><input type="checkbox" value="Subject Teacher" class="role-chk" checked onchange="toggleClassTeacherBox()"> Sub Teacher</label><label><input type="checkbox" value="Class Teacher" class="role-chk" onchange="toggleClassTeacherBox()"> Class Teacher</label><label><input type="checkbox" value="Headteacher" class="role-chk"> H/T</label><label><input type="checkbox" value="Deputy Headteacher" class="role-chk"> Dep H/T</label><label><input type="checkbox" value="DOS" class="role-chk"> DOS</label></div><small id="roleWarning" style="color:red;font-size:9px"></small><button class="btn btn-sm" onclick="addStaff()" style="margin-top:6px">Add Staff</button><table id="tblStaff" style="margin-top:6px"></table></div></div></div>
+
+<div id="page-marks" class="hidden"><h2>Marks 100 - Tests + EOT</h2><div class="card"><div class="grid2"><div><label>Class</label><select id="m_class" onchange="loadSubjectsForMarksClass();loadMarksTable()"><option>Baby Class</option><option>Middle Class</option><option>Top Class</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>P7</option></select><label>Subject</label><select id="m_subject" onchange="loadMarksTable()"></select><label>Test Sets This Term</label><select id="m_testCount" onchange="loadMarksTable()"><option value="1">1 Test</option><option value="2" selected>2 Tests</option><option value="3">3 Tests</option><option value="4">4 Tests</option></select><small style="font-size:9px;color:blue">School can dictate no. of tests, but EOT determines position & grade</small></div><div><div id="marksStats" style="background:#eef6ff;padding:6px;border-radius:6px;font-size:10px"></div><div id="gradingInfo" style="background:#fff3cd;padding:6px;border-radius:6px;font-size:9px;margin-top:4px"><b>Grading:</b><br>00-34 F9, 35-44 P8, 45-49 P7, 50-54 C6, 55-59 C5, 60-69 C4, 70-79 C3, 80-89 D2, 90-100 D1<br><b>Agg:</b> D1=1 D2=2 C3=3 C4=4 C5=5 C6=6 P7=7 P8=8 F9=9<br>Best 4 Agg: 4-12 Div1, 13-23 Div2, 24-29 Div3, 30-34 Div4, 35-36 U</div><div class="card" id="gradingEditorCard" style="margin-top:8px;border:2px solid #d4af37">
+<h3>⚙️ Editable School Grading System</h3><p style="font-size:10px">Edit mark ranges, grades, grade points, remarks and aggregate divisions. Changes are saved and used for marks entry, calculations and printed report cards.</p>
+<div id="gradingEditorRows"></div><h4 style="margin-top:10px">Aggregate / Division Bands</h4><div id="divisionEditorRows"></div><h4 style="margin-top:10px">Special Primary Grading Rules</h4><div style="font-size:10px;display:grid;gap:5px;border:1px solid #ddd;padding:7px;border-radius:6px"><label><input type="checkbox" id="rule_eng_f9" checked> Upper primary English (P4–P7) F9: Division I → III; Division II → III; Division III → IV; Division IV stays IV.</label><label><input type="checkbox" id="rule_math_f9" checked> Mathematics F9: demote division by one level, except Division IV remains IV.</label><label><input type="checkbox" id="rule_eng_pass_math" checked> Upper primary English P7/P8: lower the Mathematics grade by one grade step (grade point +1).</label><small>These rules apply after the normal Best 4 aggregate is calculated. Core-subject missing rule takes priority and gives X / Division U.</small></div>
+<button class="btn" onclick="saveCustomGrading()">Save Grading Changes</button> <button class="btn btn-gold" onclick="resetCustomGrading()">Restore Default Grading</button>
+<div id="gradingEditorStatus" style="font-size:10px;margin-top:6px"></div></div></div></div><div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap"><input type="file" id="excelMarks" accept=".xlsx,.xls,.csv" style="flex:1"><button class="btn btn-sm" onclick="importMarksExcel()">Import</button><button class="btn btn-sm btn-gold" onclick="saveMarks()">Save</button><button class="btn btn-sm" onclick="exportMarksExcel()">Export</button><button class="btn btn-sm" onclick="downloadSampleMarks()">Sample</button></div></div><div class="card" style="overflow:auto"><table id="tblMarks"></table></div></div>
+
+<div id="page-requirements" class="hidden"><h2>📋 School Requirements - By Secretary</h2><div class="card"><div class="grid2"><div><label>Class</label><select id="req_class"><option>Baby Class</option><option>Middle Class</option><option>Top Class</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>P7</option><option>ALL CLASSES</option></select><label>Term</label><select id="req_term"><option>ONE</option><option>TWO</option><option>THREE</option></select><label>Year</label><input id="req_year" value="2026" type="number"></div><div><label>Requirement Item</label><input id="req_item" placeholder="e.g. 2 Brooms, 5kg Sugar"><button class="btn btn-sm" onclick="addRequirement()">Add Item</button><button class="btn btn-sm btn-gold" onclick="clearRequirements()" style="margin-top:4px">Clear All for Class</button></div></div></div><div class="card"><h4>Requirements List - Appears on Report</h4><div id="requirementsList" style="font-size:11px"></div></div></div>
+
+<div id="page-comments" class="hidden"><h2>Comments & Performance Sheet</h2>
+<div class="card"><div class="grid2"><div><label>Class</label><select id="c_class" onchange="loadCommentsSheet()"><option>Baby Class</option><option>Middle Class</option><option>Top Class</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>P7</option></select><label>Term</label><select id="c_term"><option>ONE</option><option>TWO</option><option>THREE</option></select><label>Year</label><input id="c_year" value="2026" type="number"></div><div><button class="btn btn-sm btn-gold" onclick="loadCommentsSheet()">Load Ranked</button> <button class="btn btn-sm" onclick="saveCommentsSheet()">💾 Save Comments</button> <button class="btn btn-sm" style="background:#d4af37;color:#000" onclick="window.print()">🖨️ Print</button></div></div></div>
+<div class="card" style="overflow:auto"><div id="commentsSheetOutput"></div></div><div class="card"><div id="commentsSummary" style="font-size:10px"></div></div></div>
+
+<div id="page-fees" class="hidden"><h2>💰 Fees Status (QR Only)</h2><div class="card"><div class="grid3"><div><label>Class</label><select id="f_class" onchange="loadFeesTable()"><option>Baby Class</option><option>Middle Class</option><option>Top Class</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>P7</option></select></div><div><label>Term</label><select id="f_term" onchange="loadFeesTable()"><option>ONE</option><option>TWO</option><option>THREE</option></select></div><div><label>Year</label><input id="f_year" value="2026" type="number" onchange="loadFeesTable()"></div></div><button class="btn btn-sm btn-gold" onclick="saveFeesTable()">💾 Save Fees</button> <button class="btn btn-sm" onclick="markAllFeesPaid()">Mark All Paid</button></div><div class="card" style="overflow:auto"><table id="tblFees"></table></div></div>
+
+<div id="page-attendance" class="hidden"><h2>📅 Attendance (QR Only)</h2><div class="card"><div class="grid3"><div><label>Class</label><select id="a_class" onchange="loadAttendanceTable()"><option>Baby Class</option><option>Middle Class</option><option>Top Class</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>P7</option></select></div><div><label>Date</label><input id="a_date" type="date" onchange="loadAttendanceTable()"></div><div><label>Term</label><select id="a_term"><option>ONE</option><option>TWO</option><option>THREE</option></select></div></div><div style="display:flex;gap:4px;margin-top:6px"><button class="btn btn-sm btn-gold" onclick="saveAttendance()">💾 Save</button><button class="btn btn-sm" onclick="markAllPresent()">All Present</button><button class="btn btn-sm" onclick="generateAttendanceSummary()">Summary</button></div></div><div class="card" style="overflow:auto"><table id="tblAttendance"></table></div><div class="card"><div id="attendanceSummaryOutput" style="font-size:11px"></div></div></div>
+
+<div id="page-analysis" class="hidden"><h2>📈 Subject Analysis - Primary</h2><div class="card"><div class="grid2"><div><label>Class</label><select id="an_class" onchange="loadAnalysis()"><option>Baby Class</option><option>Middle Class</option><option>Top Class</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>P7</option></select><label>Term</label><select id="an_term"><option>ONE</option><option>TWO</option><option>THREE</option></select></div><div><label>Year</label><input id="an_year" value="2026" type="number"><button class="btn btn-sm btn-gold" onclick="loadAnalysis()" style="margin-top:6px">Generate Analysis</button></div></div></div><div class="card"><div id="analysisOutput"></div></div></div><div id="page-school" class="hidden"><h2>School Information & Report Design</h2><div class="card"><label>Name</label><input id="sch_name" value="KIKATSI PRIMARY SCHOOL"><label>Box</label><input id="sch_box" value="P.O.BOX 1762, MBARARA."><label>District</label><input id="sch_dist" value="KIRUHURA DISTRICT"><label>Motto</label><input id="sch_motto" value="STRIVE FOR EXCELLENCE"><label>Badge</label><input type="file" id="sch_badge" accept="image/*"><img id="badgePreview" style="height:60px;display:none;margin-top:4px"><button class="btn" onclick="saveSchoolInfo()" style="margin-top:6px">Save School Details</button></div>
+<div class="card"><h3>Report Appearance Settings</h3><p style="font-size:11px">Customise the primary-school report layout. Settings apply to single and bulk reports.</p>
+<div class="grid2"><div><label>Report Font</label><select id="pr_font"><option value="Arial, sans-serif">Arial</option><option value="Georgia, serif">Georgia</option><option value="'Times New Roman', serif">Times New Roman</option><option value="Verdana, sans-serif">Verdana</option><option value="Calibri, sans-serif">Calibri</option></select><label>Base Font Size (px)</label><input id="pr_fontsize" type="number" min="7" max="15" value="9"><label>Page Padding (mm)</label><input id="pr_padding" type="number" min="3" max="18" value="7"><label>Page Background</label><input id="pr_bg" type="color" value="#ffffff"></div>
+<div><label>Border Style</label><select id="pr_border"><option value="solid">Solid</option><option value="double">Double</option><option value="dashed">Dashed</option><option value="dotted">Dotted</option><option value="none">None</option></select><label>Border Colour</label><input id="pr_bordercolor" type="color" value="#222222"><label>Border Width (px)</label><input id="pr_borderwidth" type="number" min="0" max="6" step="0.5" value="1"><label>Watermark Text</label><input id="pr_watermark" maxlength="50" placeholder="e.g. OFFICIAL SCHOOL COPY"><label>Watermark Opacity (0–0.25)</label><input id="pr_opacity" type="number" min="0" max="0.25" step="0.01" value="0.08"></div></div>
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn" onclick="savePrimaryReportDesign()">Save Report Design</button><button class="btn btn-gold" onclick="resetPrimaryReportDesign()">Reset Design</button></div></div></div>
+
+<div id="page-reports" class="hidden"><h2>Single Report + QR + Requirements</h2><div class="card"><div class="grid2"><div><label>Class</label><select id="r_class" onchange="loadReportStudents()"><option>Baby Class</option><option>Middle Class</option><option>Top Class</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>P7</option></select><label>Student</label><select id="r_student"></select><label>Term</label><select id="r_term"><option>ONE</option><option>TWO</option><option>THREE</option></select><label>Year</label><input id="r_year" value="2026" type="number"></div><div><label>Closing This Term</label><input id="r_close" type="date" value="2026-04-04"><label>Opening Next Term</label><input id="r_open" type="date" value="2026-05-18"><label>Closing Next Term</label><input id="r_close_next" type="date" value="2026-08-28"></div></div><button class="btn" onclick="generateReport()" style="margin-top:6px">Generate + QR + Requirements</button> <button class="btn btn-gold" onclick="window.print()">Print</button></div>
+<div class="card" id="reportSectionEditor"><h3>Format Any Report Section</h3><p style="font-size:11px">Choose a section, adjust its typography, alignment, shading and border, then apply. Settings are saved and used in newly generated single and bulk reports.</p>
+<div class="grid2"><div><label>Report Section</label><select id="rsec_target"><option value="school-heading">School heading</option><option value="school-contact">School address and district</option><option value="report-title">Report title</option><option value="pupil-details">Pupil details</option><option value="marks-table">Marks table</option><option value="summary-row">Totals and performance summary</option><option value="grading-key">Grading table</option><option value="secretary-info">Secretary information</option><option value="comments">Comments and signatures</option><option value="requirements">School requirements</option><option value="term-dates">Term dates</option><option value="school-motto">School motto</option><option value="qr-section">QR verification</option></select>
+<label>Font</label><select id="rsec_font"><option value="">Use report font</option><option value="Arial, sans-serif">Arial</option><option value="Georgia, serif">Georgia</option><option value="'Times New Roman', serif">Times New Roman</option><option value="Verdana, sans-serif">Verdana</option><option value="Calibri, sans-serif">Calibri</option></select><label>Font size (px)</label><input id="rsec_size" type="number" min="6" max="32" placeholder="Keep current"><label>Text colour</label><input id="rsec_color" type="color" value="#000000"></div>
+<div><label>Alignment</label><select id="rsec_align"><option value="">Keep current</option><option value="left">Left</option><option value="center">Centre</option><option value="right">Right</option><option value="justify">Justify</option></select><label>Shading / background</label><input id="rsec_bg" type="color" value="#ffffff"><label>Border style</label><select id="rsec_border"><option value="">Keep current</option><option value="none">None</option><option value="solid">Solid</option><option value="double">Double</option><option value="dashed">Dashed</option><option value="dotted">Dotted</option></select><label>Border colour</label><input id="rsec_bordercolor" type="color" value="#222222"><label>Border width (px)</label><input id="rsec_borderwidth" type="number" min="0" max="8" step="0.5" value="1"><div style="display:flex;gap:10px;flex-wrap:wrap;margin:8px 0"><label><input id="rsec_bold" type="checkbox"> Bold</label><label><input id="rsec_italic" type="checkbox"> Italic</label><label><input id="rsec_underline" type="checkbox"> Underline</label></div></div></div><button class="btn" onclick="applyPrimaryReportSectionStyle()">Apply to Section</button> <button class="btn btn-gold" onclick="clearPrimaryReportSectionStyle()">Clear Section Formatting</button></div><div class="card" id="secretaryReportInfo"><h3>Secretary: Additional Report Card Information</h3><p style="font-size:11px">Add a school-wide notice (for example, reminders, upcoming events or important instructions) and optional information for the selected pupil. These notes are saved and printed on report cards, including bulk reports.</p><label>School-wide notice (appears on every report card)</label><textarea id="secretary_school_notice" rows="3" placeholder="Enter useful information for parents and guardians..."></textarea><label>Information for selected pupil (appears only on that pupil's report)</label><textarea id="secretary_pupil_note" rows="3" placeholder="Enter an individual note, achievement, reminder or support information..."></textarea><button class="btn" onclick="saveSecretaryReportInfo()">Save Report Information</button> <button class="btn btn-gold" onclick="loadSecretaryReportInfo()">Load Saved Information</button><div id="secretaryInfoStatus" style="font-size:11px;margin-top:5px"></div></div>
+<div id="reportOutput"></div></div>
+
+<div id="page-bulk" class="hidden"><h2>Bulk Print ALL + QR + Requirements</h2><div class="card"><div class="grid2"><div><label>Class</label><select id="b_class"><option>Baby Class</option><option>Middle Class</option><option>Top Class</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>P7</option></select><label>Term</label><select id="b_term"><option>ONE</option><option>TWO</option><option>THREE</option></select><label>Year</label><input id="b_year" value="2026" type="number"></div><div><label>Closing</label><input id="b_close" type="date" value="2026-04-04"><label>Opening</label><input id="b_open" type="date" value="2026-05-18"><label>Closing Next</label><input id="b_close_next" type="date" value="2026-08-28"></div></div><button class="btn" onclick="generateBulkReports()" style="margin-top:6px;background:#d4af37;color:#000">Generate ALL + QR</button> <button class="btn btn-gold" onclick="window.print()">Print All PDF</button></div><p style="font-size:11px">Use the “Format Any Report Section” controls on the Single Report page to style the same sections in bulk reports.</p><div id="bulkOutput"></div></div>
+
+<div id="page-documents" class="hidden"><h2>📑 Primary School Document Centre & Worksheet</h2>
+<div class="card"><p style="font-size:11px">Create school documents from saved school details and primary-school records. Generate a preview, edit it if needed, then print or save as PDF.</p>
+<div class="grid2"><div><label>Document Type</label><select id="pd_type" onchange="updatePrimaryDocumentFields()"><option value="classlist">Class List</option><option value="circular">School Circular</option><option value="requirements">School Requirements List</option><option value="admission">Admission Letter</option><option value="rollcall">Daily Roll-call Sheet</option><option value="stafflist">Staff List</option><option value="custom">Custom Document</option><option value="worksheet">Worksheet / Marks Table</option></select><label>Class</label><select id="pd_class"><option>Baby Class</option><option>Middle Class</option><option>Top Class</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>P7</option></select><label>Term</label><select id="pd_term"><option>ONE</option><option>TWO</option><option>THREE</option></select><label>Pupil (for admission letter)</label><select id="pd_pupil"></select></div><div><label>Document Date</label><input id="pd_date" type="date"><label>Academic Year</label><input id="pd_year" type="number" value="2026"><label>Title / Subject</label><input id="pd_title" placeholder="Enter document title"></div></div>
+<label>Document Body / Instructions</label><div id="pd_body" contenteditable="true" style="min-height:110px;border:1px solid #9aa8b5;border-radius:6px;padding:9px;background:#fff" >Type your circular, letter or custom document content here...</div>
+<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px"><button class="btn btn-sm" onclick="formatPrimaryDoc('bold')"><b>B</b></button><button class="btn btn-sm" onclick="formatPrimaryDoc('italic')"><i>I</i></button><button class="btn btn-sm" onclick="formatPrimaryDoc('underline')"><u>U</u></button><button class="btn btn-sm" onclick="formatPrimaryDoc('insertUnorderedList')">• Bullets</button><button class="btn btn-sm" onclick="insertPrimaryDocTable()">Insert Table</button><button class="btn btn-gold" onclick="generatePrimaryDocument()">Generate Document</button><button class="btn" onclick="printPrimaryDocument()">Print / Save PDF</button></div></div>
+<div id="pd_output"></div>
+<div class="card"><h3>Simple Worksheet Builder</h3><p style="font-size:10px">Edit cells directly. Supported formulas: =SUM(A1:A5), =AVERAGE(A1:A5), =COUNT(A1:A5), =MIN(A1:A5), =MAX(A1:A5), and simple arithmetic such as =B2+C2.</p><div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-sm" onclick="addPrimarySheetRow()">＋ Add Row</button><button class="btn btn-sm" onclick="recalcPrimarySheet()">Recalculate</button><button class="btn btn-sm btn-gold" onclick="insertPrimarySheetInDoc()">Insert Worksheet into Document</button></div><div id="primarySheetWrap" style="overflow:auto;margin-top:8px"></div></div></div>
+<div id="page-backup" class="hidden"><h2>💾 Backup / Payment & Data Protection</h2>
+<div class="grid2">
+<div class="card" style="border:2px solid #0f3d2e"><h4 style="color:#0f3d2e">💳 Activate PRIMARY Package - UGX 300,000</h4>
+<div style="background:#fff3cd;padding:8px;border-radius:8px;font-size:11px;line-height:1.6">
+<b>Merchant ID: 32828705</b><br>
+<b>Account: FEAVIAL PRIMARY</b><br><br>
+<b>How to Pay:</b><br>
+1. MTN MoMo / Airtel → Pay Merchant<br>
+2. Merchant ID: <b>32828705</b><br>
+3. Amount: <b>UGX 300,000</b> Lifetime<br>
+4. Ref: School Name<br>
+5. Screenshot → WhatsApp<br>
+6. Support Fee: <b>UGX 100,000</b><br><br>
+<span style="color:red"><b>Without activation, reports show watermark NOT ACTIVATED</b></span>
+</div>
+<a href="https://wa.me/256783018954?text=Hello%20FEAVIAL%20PRIMARY,%20I%20paid%20Merchant%2032828705" target="_blank" style="display:block;background:#25D366;color:#fff;text-align:center;padding:10px;border-radius:8px;text-decoration:none;font-weight:bold;margin-top:8px">📱 Send Proof: 0783018954</a>
+<div style="margin-top:8px"><label>Enter Activation Credential</label><input id="activationCode" placeholder="Enter credential supplied by the system owner"><button class="btn btn-sm btn-gold" onclick="activateSystem()" style="width:100%">✅ Activate</button><div id="activationStatus" style="font-size:11px;margin-top:6px"></div><small style="font-size:9px;color:gray">Enter the credential supplied by the system owner. Successful activation removes the report watermark.</small></div>
+</div>
+<div class="card"><h4>Full Backup</h4><p style="font-size:10px;color:#5b6570">Download a JSON backup regularly and before restoring, resetting, or updating the application.</p><button class="btn btn-sm btn-gold" onclick="exportFullBackup()" style="width:100%;margin-top:6px">📥 Download Backup JSON</button><button class="btn btn-sm" onclick="exportStudentsExcel()" style="width:100%;margin-top:4px">Export Pupils Excel</button><button class="btn btn-sm" onclick="exportMarksAllExcel()" style="width:100%;margin-top:4px">Export All Marks</button></div>
+</div>
+<div class="grid2">
+<div class="card"><h4>Restore</h4><input type="file" id="restoreFile" accept=".json"><button class="btn btn-sm" onclick="importFullBackup()" style="width:100%;margin-top:6px;background:red;color:#fff">⚠️ Restore</button><div style="margin-top:8px;background:#fff3cd;padding:6px;border-radius:6px;font-size:10px"><b>Last Backup:</b> <span id="lastBackupInfo">Never</span><br><b>Activation:</b> <span id="actInfo">Not Activated</span></div></div>
+<div class="card"><h4>Activation Status</h4><p style="font-size:10px;color:#52606d">Activation details are handled privately by the system. No activation-code list is displayed here.</p></div>
+</div>
+</div>
+
+<div id="page-audit" class="hidden"><h2>📋 Audit Log</h2><div class="card"><div style="display:flex;gap:4px"><button class="btn btn-sm" onclick="clearAuditLog()">Clear</button><button class="btn btn-sm btn-gold" onclick="exportAuditLog()">Export</button></div></div><div class="card" style="overflow:auto"><table id="tblAudit"></table></div></div>
+
+<div id="page-help" class="hidden"><h2>❓ HELP - PRIMARY</h2>
+<div class="card" style="border-left:4px solid #d4af37;background:#fff8e1;font-size:11px"><b>Important data and security note:</b> This is a browser-based, offline-style application. Its records and account credentials are stored in this browser's local storage. The built-in master/activation checks are client-side only and are not secure payment verification or server-backed user authentication. Activation credentials are not displayed in the site interface, but client-side validation logic can still be inspected in the HTML source by a technical user. Back up records regularly and do not treat this file as a secure multi-user database.</div>
+<div style="background:#0f3d2e;color:#fff;padding:10px;border-radius:8px;text-align:center;margin-bottom:10px">
+<h3>FEAVIAL PRIMARY PRO MAX</h3>
+<p style="font-size:11px;margin-top:4px">Baby, Middle, Top, P1-P7 | UGX 300k + 100k Support</p>
+<a href="https://wa.me/256783018954?text=Hello%20FEAVIAL%20PRIMARY%20Owner" target="_blank" style="display:inline-block;background:#25D366;color:#fff;padding:8px 14px;border-radius:6px;text-decoration:none;font-weight:bold;margin-top:6px">📱 WhatsApp: 0783018954</a>
+</div>
+<div style="background:#fff3cd;padding:10px;border-radius:8px;border:1px solid #d4af37;margin-bottom:10px">
+<h4>💳 Payment - UGX 300,000 + UGX 100,000 Support</h4>
+<p style="font-size:11px;line-height:1.6">
+<b>Merchant ID: 32828705</b><br>
+Grading: 00-34 F9, 35-44 P8, 45-49 P7, 50-54 C6, 55-59 C5, 60-69 C4, 70-79 C3, 80-89 D2, 90-100 D1<br>
+Aggregate best 4: D1=1 D2=2 C3=3 C4=4 C5=5 C6=6 P7=7 P8=8 F9=9<br>
+Position: EOT average determines 1st out of 50<br>
+Requirements: Secretary adds list, appears on report<br>
+Contact Owner via WhatsApp after paying Merchant 32828705
+</p>
+</div>
+</div>
+
+</div></div></div>
+
+<script>
+const LS=localStorage;
+const MASTER_PASSWORD="Noble Elixir 256";
+function isValidActivation(code){if(!code)return false;const m=String(code).trim().toUpperCase().match(/^FEAVIAL-2026-(\d{6})$/);if(!m)return false;const n=Number(m[1]);return Number.isInteger(n)&&n>=1&&n<=50;}
+function getData(k,d){try{return JSON.parse(LS.getItem(k))||d}catch{return d}}function setData(k,v){LS.setItem(k,JSON.stringify(v))}
+function logAction(action){let logs=getData('auditLogs',[]);let user=LS.getItem('currentUser')||'System';let role=LS.getItem('currentRole')||'Unknown';logs.push({time:new Date().toLocaleString(),user,role,action});if(logs.length>500)logs.shift();setData('auditLogs',logs);renderAudit();}
+function checkMaster(){
+  let val=document.getElementById('masterPassInput').value.trim();
+  let upper=val.toUpperCase();
+  if(val===MASTER_PASSWORD || isValidActivation(val)){
+    LS.setItem('masterUnlocked','1');
+    if(isValidActivation(val)){
+      setData('activated',true);setData('activationCode',upper);setData('activationDate',new Date().toLocaleString());
+      logAction('Unlocked with activation credential');
+    } else { logAction('Master unlocked Developer'); }
+    document.getElementById('masterLock').classList.add('hidden');
+    document.getElementById('loginPage').classList.remove('hidden');
+    initAuth();
+  } else {
+    let err=document.getElementById('masterError');
+    err.style.display='block';
+    err.innerHTML='Access credential not recognised. Please contact the system owner for assistance.<br><a href="https://wa.me/256783018954" target="_blank" style="color:blue">Contact support</a>';
+  }
+}
+function initAuth(){let c=getData('secretaryCred',null);if(LS.getItem('masterUnlocked')!=='1'){document.getElementById('masterLock').classList.remove('hidden');document.getElementById('loginPage').classList.add('hidden');document.getElementById('app').classList.add('hidden');return;}document.getElementById('masterLock').classList.add('hidden');if(!c){setupBox.classList.remove('hidden');loginBox.classList.add('hidden');document.getElementById('loginPage').classList.remove('hidden');}else{setupBox.classList.add('hidden');loginBox.classList.remove('hidden');document.getElementById('loginPage').classList.remove('hidden');}}
+function doSetup(){let u=setupUser.value.trim()||'secretary',p=setupPass.value.trim(),d=setupDOSPass.value.trim(),h=setupHTPass.value.trim();if(!p||!d||!h)return alert('Fill all');setData('secretaryCred',{u,p,dosPass:d,htPass:h});setData('dosCred',{u:'DOS',p:d});setData('htCred',{u:'Headteacher',p:h});alert('Accounts created!');location.reload()}
+function doLogin(){let role=loginRole.value;let u=loginUser.value.trim();let p=loginPass.value.trim();let c=getData('secretaryCred',null);let ok=false;if(role==='Secretary'){if(c&&c.u===u&&c.p===p)ok=true;}else if(role==='DOS'){let dc=getData('dosCred',null);let sc=getData('secretaryCred',null);if((dc&&dc.p===p)|| (sc&&sc.dosPass===p))ok=true;u='DOS';}else if(role==='Headteacher'){let hc=getData('htCred',null);let sc=getData('secretaryCred',null);if((hc&&hc.p===p)|| (sc&&sc.htPass===p))ok=true;u='Headteacher';}if(ok){LS.setItem('logged','1');LS.setItem('currentUser',u);LS.setItem('currentRole',role);logAction('Login '+role);showApp();}else alert('Wrong password '+role)}
+function logout(){logAction('Logout');LS.removeItem('logged');LS.removeItem('currentUser');LS.removeItem('currentRole');location.reload()}function resetSystem(){if(confirm('This permanently clears all FEAVIAL records, accounts, settings and audit history in this browser. Download a JSON backup first. Continue?')){logAction('RESET');LS.clear();location.reload()}}
+function showApp(){loginPage.classList.add('hidden');app.classList.remove('hidden');document.getElementById('roleBadge').innerText=LS.getItem('currentRole')+' : '+(LS.getItem('currentUser')||'');loadAll()}
+if(LS.getItem('logged')==='1' && LS.getItem('masterUnlocked')==='1'){loginPage.classList.add('hidden');app.classList.remove('hidden');document.getElementById('masterLock').classList.add('hidden');document.getElementById('roleBadge').innerText=LS.getItem('currentRole')+' : '+(LS.getItem('currentUser')||'');}
+initAuth();
+function showPage(id,btn){document.querySelectorAll('[id^=page-]').forEach(e=>e.classList.add('hidden'));let el=document.getElementById('page-'+id);if(el)el.classList.remove('hidden');document.querySelectorAll('.sidebar button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');if(id==='dashboard')renderCharts();if(id==='audit')renderAudit();if(id==='fees')loadFeesTable();if(id==='attendance')loadAttendanceTable();if(id==='analysis')loadAnalysis();if(id==='requirements')loadRequirements();if(id==='backup')updateBackupInfo();if(id==='documents'){updatePrimaryDocumentFields();if(!document.getElementById('ps_1_0'))renderPrimarySheet();}}
+function activateSystem(){
+  let code=document.getElementById('activationCode').value.trim().toUpperCase();
+  if(!code)return alert('Enter the activation credential supplied by the system owner.');
+  if(isValidActivation(code)){
+    setData('activated',true);setData('activationCode',code);setData('activationDate',new Date().toLocaleString());
+    document.getElementById('activationStatus').innerHTML='<span style="color:green;font-weight:bold">✓ ACTIVATED — Watermark Removed</span>';
+    logAction('Activation completed');alert('Activation successful. Watermark removed.');updateBackupInfo();
+  }else{alert('The activation credential was not accepted. Please contact the system owner for assistance.');}
+}
+function isActivated(){return getData('activated',false);}
+function saveSchoolInfo(){let f=sch_badge.files[0];let save=(b)=>{let info={name:sch_name.value,box:sch_box.value,dist:sch_dist.value,motto:sch_motto.value,badge:b||getData('schoolInfo',{badge:''}).badge};setData('schoolInfo',info);updateSchoolDisplay();logAction('Saved school');alert('Saved')};if(f){let r=new FileReader();r.onload=e=>{save(e.target.result);badgePreview.src=e.target.result;badgePreview.style.display='block'};r.readAsDataURL(f)}else save(null)}
+function updateSchoolDisplay(){let i=getData('schoolInfo',{name:'KIKATSI PRIMARY SCHOOL',box:'P.O.BOX 1762, MBARARA.',dist:'KIRUHURA DISTRICT',motto:'STRIVE FOR EXCELLENCE',badge:''});sideSchool.innerHTML=i.name+'<br>'+i.box;sch_name.value=i.name;sch_box.value=i.box;sch_dist.value=i.dist;sch_motto.value=i.motto;if(i.badge){badgePreview.src=i.badge;badgePreview.style.display='block'}}
+
+function getLevelFromClass(sclass){
+  if(['Baby Class','Middle Class','Top Class'].includes(sclass)) return 'Pre-Primary';
+  if(['P1','P2','P3'].includes(sclass)) return 'Lower Primary';
+  return 'Upper Primary';
+}
+function getSubjectsForClass(sclass){
+  let all=getData('subjects',[]);
+  return all.filter(sub=>!sub.classes||sub.classes.includes(sclass)||sub.classes.includes('ALL'));
+}
+
+function prefillSubjectsPrimary(){
+  let subs=getData('subjects',[]);
+  const pre=["English","Mathematics","Reading","Writing","Number Work","Rhymes","Religious Education","Creative Activities","Health Habits","Social Development"];
+  const lower=["English","Mathematics","Science","Social Studies","Religious Education","Local Language","Literacy I","Literacy II","Creative Arts"];
+  const upper=["English","Mathematics","Integrated Science","Social Studies","Religious Education","Local Language"];
+  pre.forEach(name=>{ if(!subs.find(s=>s.name===name)) subs.push({id:Date.now()+Math.random(),name,classes:["Baby Class","Middle Class","Top Class"]}); });
+  lower.forEach(name=>{ if(!subs.find(s=>s.name===name)) subs.push({id:Date.now()+Math.random(),name,classes:["P1","P2","P3"]}); });
+  upper.forEach(name=>{ if(!subs.find(s=>s.name===name)) subs.push({id:Date.now()+Math.random(),name,classes:["P4","P5","P6","P7"]}); });
+  setData('subjects',subs);renderSubjects();loadSubjectSelects();
+}
+
+function addSubjectPack(type){
+  let subs=getData('subjects',[]);
+  if(type==='PRE'){
+    ["English","Mathematics","Reading","Writing","Number Work","Rhymes","Religious Education","Creative Activities","Health Habits","Social Development"].forEach(name=>{ if(!subs.find(s=>s.name===name)) subs.push({id:Date.now()+Math.random(),name,classes:["Baby Class","Middle Class","Top Class"]}); });
+  } else if(type==='LOWER'){
+    ["English","Mathematics","Science","Social Studies","Religious Education","Local Language","Literacy I","Literacy II","Creative Arts"].forEach(name=>{ if(!subs.find(s=>s.name===name)) subs.push({id:Date.now()+Math.random(),name,classes:["P1","P2","P3"]}); });
+  } else {
+    ["English","Mathematics","Integrated Science","Social Studies","Religious Education","Local Language"].forEach(name=>{ if(!subs.find(s=>s.name===name)) subs.push({id:Date.now()+Math.random(),name,classes:["P4","P5","P6","P7"]}); });
+  }
+  setData('subjects',subs);renderSubjects();loadSubjectSelects();alert(type+' pack added');
+}
+function addSubject(){ let name=sub_name.value.trim(); if(!name)return alert('Name'); let subs=getData('subjects',[]); if(subs.find(s=>s.name.toUpperCase()===name.toUpperCase()))return alert('Exists'); subs.push({id:Date.now(),name,classes:["Baby Class","Middle Class","Top Class","P1","P2","P3","P4","P5","P6","P7"]}); setData('subjects',subs); renderSubjects(); loadSubjectSelects(); sub_name.value=''; }
+const PRIMARY_CLASSES=['Baby Class','Middle Class','Top Class','P1','P2','P3','P4','P5','P6','P7'];
+function renderSubjects(){
+ let subs=getData('subjects',[]);let html='<tr><th>Subject</th><th>Classes offered</th><th>Actions</th></tr>';
+ subs.forEach((sub,i)=>{let assigned=Array.isArray(sub.classes)?sub.classes:PRIMARY_CLASSES;
+  let coreAssigned=Array.isArray(sub.coreClasses)?sub.coreClasses:[];
+  html+=`<tr><td><b>${escapePrimaryHTML(sub.name)}</b></td><td><b>Offered in:</b><div style="display:grid;grid-template-columns:repeat(2,minmax(90px,1fr));gap:3px;font-size:9px">${PRIMARY_CLASSES.map(cls=>`<label style="display:flex;align-items:center;gap:3px"><input type="checkbox" class="sub-class-${i}" value="${cls}" ${assigned.includes(cls)||assigned.includes('ALL')?'checked':''}>${cls}</label>`).join('')}</div><b style="display:block;margin-top:5px;color:#9a5b00">Core subject in:</b><div style="display:grid;grid-template-columns:repeat(2,minmax(90px,1fr));gap:3px;font-size:9px">${PRIMARY_CLASSES.map(cls=>`<label style="display:flex;align-items:center;gap:3px"><input type="checkbox" class="sub-core-${i}" value="${cls}" ${coreAssigned.includes(cls)?'checked':''}>${cls}</label>`).join('')}</div><small>Core means missing EOT mark = X (ungraded) and Division U.</small></td><td><button class="btn btn-sm" onclick="saveSubjectClasses(${i})">Save classes & core status</button> <button class="btn btn-sm btn-gold" onclick="delSub(${i})">Delete</button></td></tr>`;
+ });
+ tblSubjects.innerHTML=html;sbCount.innerText=subs.length;
+}
+function saveSubjectClasses(i){let subs=getData('subjects',[]);if(!subs[i])return;let selected=Array.from(document.querySelectorAll('.sub-class-'+i+':checked')).map(el=>el.value);let core=Array.from(document.querySelectorAll('.sub-core-'+i+':checked')).map(el=>el.value);if(!selected.length)return alert('Select at least one class for this subject.');if(core.some(c=>!selected.includes(c)))return alert('A subject can only be marked core in a class where it is offered.');subs[i].classes=selected;subs[i].coreClasses=core;setData('subjects',subs);renderSubjects();loadSubjectSelects();logAction('Updated class/core settings for subject '+subs[i].name);alert(subs[i].name+' saved. Core in: '+(core.join(', ')||'No classes'));}
+function delSub(i){let a=getData('subjects',[]);a.splice(i,1);setData('subjects',a);renderSubjects();loadSubjectSelects()}
+
+function autoInitials(){ let name=st_name.value.trim(); if(!name){ st_initials.value=''; return; } let parts=name.split(' ').filter(Boolean); let init=parts.map(p=>p[0].toUpperCase()).join('').substring(0,4); st_initials.value=init; }
+function toggleClassTeacherBox(){ let isClassTeacher=Array.from(document.querySelectorAll('.role-chk:checked')).some(c=>c.value==='Class Teacher'); let box=document.getElementById('st_class_teacher_of').parentElement; box.style.display=isClassTeacher?'block':'none'; if(!isClassTeacher) document.getElementById('st_class_teacher_of').value=''; }
+function getSelectedClasses(){ let sel=document.getElementById('st_class'); if(!sel) return []; let vals=Array.from(sel.selectedOptions).map(o=>o.value); if(vals.includes('ALL')) return ["Baby Class","Middle Class","Top Class","P1","P2","P3","P4","P5","P6","P7"]; return vals; }
+function filterSubjectsByClass(){ let selectedClasses=getSelectedClasses(); let subs=getData('subjects',[]); let subjectSel=document.getElementById('st_subs_select'); if(!subjectSel) return; subjectSel.innerHTML=''; let filtered=subs; if(selectedClasses.length>0){ filtered=subs.filter(s=>{ if(!s.classes||s.classes.length===0) return true; return s.classes.some(c=> selectedClasses.includes(c)); }); } if(filtered.length===0) filtered=subs; filtered.forEach(s=>{ subjectSel.innerHTML+=`<option value="${s.name}">${s.name}</option>`; }); subjectSel.onchange=()=>{ let vals=Array.from(subjectSel.selectedOptions).map(o=>o.value); document.getElementById('st_subs').value=vals.join(', '); checkSubjectLimit(); }; document.getElementById('roleWarning').innerText=`${filtered.length} subs`; }
+function checkSubjectLimit(){ let selectedClasses=getSelectedClasses(); let numClasses=selectedClasses.length||1; let subjectSel=document.getElementById('st_subs_select'); let selectedSubs=Array.from(subjectSel.selectedOptions).length; let max=numClasses*3; let hint=document.getElementById('subjectLimitHint'); hint.innerText=`${selectedSubs}/${max} (3/class x ${numClasses})`; hint.style.color=selectedSubs>max?'red':'green'; return selectedSubs<=max; }
+function loadSubjectsForMarksClass(){let current=m_subject.value;let cls=m_class.value;let subs=getSubjectsForClass(cls);m_subject.innerHTML='';subs.forEach(s=>{m_subject.innerHTML+=`<option value="${escapePrimaryHTML(s.name)}">${escapePrimaryHTML(s.name)}</option>`;});if(subs.some(s=>s.name===current))m_subject.value=current;}
+function loadSubjectSelects(){ loadSubjectsForMarksClass(); filterSubjectsByClass(); }
+function addStaff(){ let name=st_name.value.trim(); let initials=st_initials.value.trim().toUpperCase(); let classTeacherOf=document.getElementById('st_class_teacher_of').value; let selectedClasses=getSelectedClasses(); if(selectedClasses.length===0) selectedClasses=['ALL']; let classesDisplay=selectedClasses.length>=10?'ALL':selectedClasses.join(', '); let subjectSel=document.getElementById('st_subs_select'); let selectedSubs=Array.from(subjectSel.selectedOptions).map(o=>o.value); let subs=selectedSubs.join(', '); if(!name) return alert('Name'); if(!initials){ initials=name.split(' ').map(n=>n[0]).join('').substring(0,4).toUpperCase(); } if(!subs) return alert('Select subject'); if(!checkSubjectLimit()) return alert('Subject selection exceeds the allowed limit of 3 per class.'); let roles=[]; document.querySelectorAll('.role-chk:checked').forEach(ch=>roles.push(ch.value)); if(roles.length===0) return alert('Role'); if(roles.includes('Class Teacher') && !classTeacherOf){ return alert('Select Class'); } if(!roles.includes('Class Teacher')) classTeacherOf=''; let staff=getData('staff',[]); let allClasses=["Baby Class","Middle Class","Top Class","P1","P2","P3","P4","P5","P6","P7"]; let expandClasses = (clsArr)=>{ if(clsArr.includes('ALL')||clsArr.join(',').includes('ALL')) return allClasses; return clsArr; }; let newClassesExpanded = expandClasses(selectedClasses); if(roles.includes('Headteacher') && staff.some(st=> (st.roles||[st.role]).includes('Headteacher'))){ return alert('ONE H/T'); } if(roles.includes('Deputy Headteacher') && staff.some(st=> (st.roles||[st.role]).includes('Deputy Headteacher'))){ return alert('ONE Dep'); } if(roles.includes('DOS') && staff.some(st=> (st.roles||[st.role]).includes('DOS'))){ return alert('ONE DOS'); } if(roles.includes('Class Teacher')){ let exists=staff.find(st=> st.classTeacherOf===classTeacherOf && (st.roles||[st.role]).includes('Class Teacher')); if(exists){ return alert(`${classTeacherOf} has ${exists.name}`); } } staff.push({id:Date.now(),name,initials,subjects:subs,role:roles.join(' + '),roles,class:classesDisplay,classes:newClassesExpanded,classTeacherOf,teachingClasses:newClassesExpanded}); setData('staff',staff); renderStaff(); logAction('Added staff '+name); st_name.value=''; st_initials.value=''; document.getElementById('st_subs').value=''; if(subjectSel) subjectSel.selectedIndex=-1; let classSel=document.getElementById('st_class'); if(classSel) classSel.selectedIndex=-1; document.getElementById('st_class_teacher_of').value=''; document.querySelectorAll('.role-chk').forEach((ch,i)=> ch.checked = i===0); toggleClassTeacherBox(); }
+function renderStaff(){ let staff=getData('staff',[]); let html='<tr><th>Init</th><th>Name</th><th>Head Of</th><th>Teaches</th><th>Subs</th><th>Roles</th><th>X</th></tr>'; staff.forEach((s,i)=>{ let teachDisplay=s.teachingClasses? s.teachingClasses.join(', ') : (s.classes? s.classes.join(', ') : s.class); if(teachDisplay.length>35) teachDisplay=teachDisplay.substring(0,35)+'...'; let headOf=s.classTeacherOf||'-'; html+=`<tr><td><b>${s.initials||''}</b></td><td>${s.name}</td><td style="background:#fff8e1"><b>${headOf}</b></td><td style="font-size:8px">${teachDisplay}</td><td style="font-size:8px">${s.subjects}</td><td style="font-size:8px">${s.roles? s.roles.join('<br>') : s.role}</td><td><button class="btn btn-sm" onclick="delStaff(${i})">X</button></td></tr>`; }); tblStaff.innerHTML=html; sfCount.innerText=staff.length; }
+function delStaff(i){let a=getData('staff',[]);a.splice(i,1);setData('staff',a);renderStaff()}
+
+function addStudent(){
+  let name=s_name.value.trim(),lin=s_lin.value.trim(),adm=s_adm.value.trim(),gender=s_gender.value,sclass=s_class.value;
+  if(!name||!adm)return alert('Name and admission number are required.');
+  let existing=getData('students',[]);
+  if(existing.some(p=>String(p.adm).toLowerCase()===adm.toLowerCase())) return alert('That admission number already exists.');
+  let level=getLevelFromClass(sclass);
+  let file=s_photo.files[0];
+  let save=(p)=>{
+    let s=getData('students',[]); 
+    s.push({id:Date.now(),name,lin,adm,gender,class:sclass,level,photo:p||''}); 
+    setData('students',s); renderStudents(); logAction('Added pupil '+name+' '+adm); 
+    s_name.value='';s_lin.value='';s_adm.value=''; 
+  };
+  if(file){let r=new FileReader();r.onload=e=>save(e.target.result);r.readAsDataURL(file)}else save('');
+}
+function promoteStudent(i){ let ss=getData('students',[]); let s=ss[i]; let order=["Baby Class","Middle Class","Top Class","P1","P2","P3","P4","P5","P6","P7"]; let idx=order.indexOf(s.class); if(idx>=0&&idx<order.length-1){ let next=order[idx+1]; if(confirm(`Promote ${s.name} to ${next}?`)){ s.class=next; s.level=getLevelFromClass(next); setData('students',ss); renderStudents(); logAction('Promoted '+s.name+' to '+next); } } }
+function promoteAllPassed(){
+  let order=["Baby Class","Middle Class","Top Class","P1","P2","P3","P4","P5","P6","P7"];
+  let students=getData('students',[]); let marks=getData('marks',{}); let subjectsAll=getData('subjects',[]);
+  let promoted=0;
+  students.forEach(s=>{
+    if(s.class==='P7'||s.class==='Top Class')return;
+    let subs=subjectsAll.filter(sub=>!sub.classes||sub.classes.includes(s.class));
+    let stat=calculateStudentStats(s.adm,subs,marks);
+    if(parseFloat(stat.avg)>=50){
+      let idx=order.indexOf(s.class); if(idx>=0&&idx<order.length-1){ s.class=order[idx+1]; s.level=getLevelFromClass(order[idx+1]); promoted++; }
+    }
+  });
+  if(promoted>0){ setData('students',students); renderStudents(); logAction('Auto Promoted '+promoted); alert('Promoted '+promoted); } else alert('No pupil qualifies (need avg 50)');
+}
+function renderStudents(){
+  let ss=getData('students',[]); 
+  tblStudents.innerHTML='<tr><th>Photo</th><th>Name</th><th>Adm</th><th>Class</th><th>Level</th><th>Action</th></tr>'; 
+  ss.forEach((s,i)=>{
+    let level=s.level||getLevelFromClass(s.class); 
+    tblStudents.innerHTML+=`<tr><td>${s.photo?`<img src="${s.photo}" style="height:24px;width:24px;border-radius:50%">`:'-'}<\/td><td>${s.name}<\/td><td>${s.adm}<\/td><td>${s.class}<\/td><td><span style="background:${level.includes('Pre')?'#d4af37':level.includes('Lower')?'#0f3d2e':'#1565c0'};color:${level.includes('Pre')?'#000':'#fff'};padding:1px 4px;border-radius:3px;font-size:8px">${level}<\/span><\/td><td><button class="btn btn-sm btn-gold" onclick="promoteStudent(${i})">↑</button><button class="btn btn-sm" onclick="delStudent(${i})">X</button><\/td><\/tr>`; 
+  }); 
+  stCount.innerText=ss.length
+}
+function delStudent(i){let s=getData('students',[]);let name=s[i]?.name; s.splice(i,1);setData('students',s);renderStudents();logAction('Deleted pupil '+name)}
+function importStudentsExcel(){if(typeof XLSX==='undefined')return alert('Excel library is unavailable. Check your internet connection and reload.');let file=excelStudent.files[0];if(!file)return alert('Select');let reader=new FileReader();reader.onload=e=>{let wb=XLSX.read(e.target.result,{type:'binary'});let ws=wb.Sheets[wb.SheetNames[0]];let data=XLSX.utils.sheet_to_json(ws);let ss=getData('students',[]);data.forEach(row=>{let name=row.Name||row.NAME;let adm=row.Admission||row.ADM;let sclass=row.Class||'P1';if(name&&adm)ss.push({id:Date.now()+Math.random(),name,lin:row.LIN||'',adm:String(adm),gender:row.Gender||'Male',class:sclass,level:getLevelFromClass(sclass),photo:''})});setData('students',ss);renderStudents();logAction('Imported '+data.length);alert('Imported '+data.length)};reader.readAsBinaryString(file)}
+function exportStudentsExcel(){if(typeof XLSX==='undefined')return alert('Excel library is unavailable. Check your internet connection and reload.');let ss=getData('students',[]);let ws=XLSX.utils.json_to_sheet(ss.map(s=>({Name:s.name,Admission:s.adm,Class:s.class,Level:s.level||getLevelFromClass(s.class)})));let wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Pupils');XLSX.writeFile(wb,'pupils_export.xlsx');}
+function downloadSampleStudents(){let ws=XLSX.utils.json_to_sheet([{Name:'ABEL AKANYIJUKA',Admission:'P1-001',Class:'P1',Gender:'Male'}]);let wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Template');XLSX.writeFile(wb,'pupils_template.xlsx')}
+
+
+const DEFAULT_PRIMARY_GRADING={
+ grades:[
+ {min:90,max:100,grade:'D1',point:1,remark:'Distinction'},
+ {min:80,max:89,grade:'D2',point:2,remark:'Distinction'},
+ {min:70,max:79,grade:'C3',point:3,remark:'Credit'},
+ {min:60,max:69,grade:'C4',point:4,remark:'Credit'},
+ {min:55,max:59,grade:'C5',point:5,remark:'Credit'},
+ {min:50,max:54,grade:'C6',point:6,remark:'Credit'},
+ {min:45,max:49,grade:'P7',point:7,remark:'Pass'},
+ {min:35,max:44,grade:'P8',point:8,remark:'Pass'},
+ {min:0,max:34,grade:'F9',point:9,remark:'Fail'}
+ ],
+ divisions:[
+ {min:4,max:12,label:'Division I'},
+ {min:13,max:23,label:'Division II'},
+ {min:24,max:29,label:'Division III'},
+ {min:30,max:34,label:'Division IV'},
+ {min:35,max:36,label:'Division U'}
+ ]
+};
+function getPrimaryGrading(){return getData('primaryCustomGrading',DEFAULT_PRIMARY_GRADING);}
+function renderGradingEditor(){
+ const g=getPrimaryGrading();loadPrimarySpecialRules();
+ const rows=document.getElementById('gradingEditorRows');
+ const divs=document.getElementById('divisionEditorRows');
+ if(!rows||!divs)return;
+ rows.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:11px"><tr><th>Min %</th><th>Max %</th><th>Grade</th><th>Point</th><th>Remark</th></tr>'+g.grades.map((r,i)=>`<tr>
+ <td><input type="number" min="0" max="100" id="gr_min_${i}" value="${r.min}" style="min-width:55px"></td>
+ <td><input type="number" min="0" max="100" id="gr_max_${i}" value="${r.max}" style="min-width:55px"></td>
+ <td><input id="gr_grade_${i}" value="${escapePrimaryHTML(r.grade)}" style="min-width:55px"></td>
+ <td><input type="number" min="0" max="99" id="gr_point_${i}" value="${r.point}" style="min-width:50px"></td>
+ <td><input id="gr_remark_${i}" value="${escapePrimaryHTML(r.remark)}" style="min-width:95px"></td></tr>`).join('')+'</table>';
+ divs.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:11px"><tr><th>Min Aggregate</th><th>Max Aggregate</th><th>Division</th></tr>'+g.divisions.map((r,i)=>`<tr><td><input type="number" min="0" id="dv_min_${i}" value="${r.min}"></td><td><input type="number" min="0" id="dv_max_${i}" value="${r.max}"></td><td><input id="dv_label_${i}" value="${escapePrimaryHTML(r.label)}"></td></tr>`).join('')+'</table>';
+}
+const DEFAULT_PRIMARY_SPECIAL_RULES={englishF9Division:true,mathF9Division:true,englishPassMathGrade:true};
+function getPrimarySpecialRules(){return {...DEFAULT_PRIMARY_SPECIAL_RULES,...getData('primarySpecialGradingRules',{})};}
+function savePrimarySpecialRules(){const rules={englishF9Division:document.getElementById('rule_eng_f9').checked,mathF9Division:document.getElementById('rule_math_f9').checked,englishPassMathGrade:document.getElementById('rule_eng_pass_math').checked};setData('primarySpecialGradingRules',rules);}
+function loadPrimarySpecialRules(){const r=getPrimarySpecialRules();if(document.getElementById('rule_eng_f9'))document.getElementById('rule_eng_f9').checked=r.englishF9Division;if(document.getElementById('rule_math_f9'))document.getElementById('rule_math_f9').checked=r.mathF9Division;if(document.getElementById('rule_eng_pass_math'))document.getElementById('rule_eng_pass_math').checked=r.englishPassMathGrade;}
+function isUpperPrimary(cls){return ['P4','P5','P6','P7'].includes(String(cls||'').toUpperCase());}
+function divisionIndex(label){const ds=getPrimaryGrading().divisions.slice().sort((a,b)=>a.min-b.min);return ds.findIndex(d=>String(d.label).toLowerCase()===String(label).toLowerCase());}
+function divisionAt(index){const ds=getPrimaryGrading().divisions.slice().sort((a,b)=>a.min-b.min);return ds[Math.max(0,Math.min(index,ds.length-1))]?.label||'';}
+function lowerDivision(label,steps,keepDivisionIV=true){const i=divisionIndex(label);if(i<0)return label;const ds=getPrimaryGrading().divisions.slice().sort((a,b)=>a.min-b.min);const current=ds[i]?.label||'';if(keepDivisionIV&&/division\s*iv/i.test(current))return current;return divisionAt(i+steps);}
+function getSubjectGradePoint(adm,sub,marks,englishMark,cls){const m=marks[adm+'_'+sub.name];if(!m||m.eot===''||m.eot===null||m.eot===undefined||!Number.isFinite(Number(m.eot)))return null;let mark=Number(m.eot),grade=getGradeFromMark(mark),point=getAggFromGrade(grade);const rules=getPrimarySpecialRules();if(rules.englishPassMathGrade&&isUpperPrimary(cls)&&sub.name.toLowerCase()==='mathematics'&&englishMark!==null){const eg=getGradeFromMark(englishMark);if(['P7','P8'].includes(String(eg).toUpperCase())){const maxPoint=Math.max(...getPrimaryGrading().grades.map(x=>Number(x.point)));point=Math.min(maxPoint,point+1);const replacement=getPrimaryGrading().grades.find(x=>Number(x.point)===point);if(replacement)grade=replacement.grade;}}return {mark,grade,point};}
+function saveCustomGrading(){
+ const old=getPrimaryGrading();
+ const grades=old.grades.map((r,i)=>({min:Number(document.getElementById('gr_min_'+i).value),max:Number(document.getElementById('gr_max_'+i).value),grade:document.getElementById('gr_grade_'+i).value.trim(),point:Number(document.getElementById('gr_point_'+i).value),remark:document.getElementById('gr_remark_'+i).value.trim()}));
+ const divisions=old.divisions.map((r,i)=>({min:Number(document.getElementById('dv_min_'+i).value),max:Number(document.getElementById('dv_max_'+i).value),label:document.getElementById('dv_label_'+i).value.trim()}));
+ if(grades.some(r=>!Number.isInteger(r.min)||!Number.isInteger(r.max)||r.min<0||r.max>100||r.min>r.max||!r.grade||!Number.isFinite(r.point)||!r.remark)){alert('Check every grading row. Marks must be whole numbers from 0 to 100 and all fields must be completed.');return;}
+ const sorted=[...grades].sort((a,b)=>a.min-b.min);
+ let next=0;for(const r of sorted){if(r.min!==next){alert('Grading ranges must cover 0–100 continuously without gaps or overlaps. Check the minimum and maximum values.');return;}next=r.max+1;}if(next!==101){alert('The grading ranges must cover marks 0 to 100.');return;}
+ if(new Set(grades.map(r=>r.grade.toUpperCase())).size!==grades.length){alert('Each grade must be unique.');return;}
+ if(divisions.some(r=>!Number.isInteger(r.min)||!Number.isInteger(r.max)||r.min<0||r.min>r.max||!r.label)){alert('Check the aggregate division ranges.');return;}
+ const sd=[...divisions].sort((a,b)=>a.min-b.min);for(let i=1;i<sd.length;i++){if(sd[i].min<=sd[i-1].max){alert('Aggregate division ranges must not overlap.');return;}}
+ setData('primaryCustomGrading',{grades,divisions});savePrimarySpecialRules();refreshGradingDisplay();
+ document.getElementById('gradingEditorStatus').textContent='Saved. New calculations and generated report cards will use this grading system.';
+ logAction('Updated primary school grading system');
+}
+function resetCustomGrading(){if(!confirm('Restore the default primary grading system?'))return;setData('primaryCustomGrading',DEFAULT_PRIMARY_GRADING);renderGradingEditor();refreshGradingDisplay();logAction('Restored default primary grading');}
+function refreshGradingDisplay(){
+ const el=document.getElementById('gradingInfo');if(!el)return;const g=getPrimaryGrading();
+ el.innerHTML='<b>Grading:</b> '+g.grades.slice().sort((a,b)=>a.min-b.min).map(r=>`${r.min}-${r.max} ${escapePrimaryHTML(r.grade)}`).join(', ')+'<br><b>Aggregate:</b> '+g.grades.map(r=>`${escapePrimaryHTML(r.grade)}=${r.point}`).join(' ')+'<br><b>Divisions:</b> '+g.divisions.map(r=>`${r.min}-${r.max} ${escapePrimaryHTML(r.label)}`).join(', ');
+}
+function getGradeFromMark(mark){
+ mark=parseFloat(mark)||0;const row=getPrimaryGrading().grades.find(r=>mark>=r.min&&mark<=r.max);return row?row.grade:'';
+}
+function getAggFromGrade(grade){const row=getPrimaryGrading().grades.find(r=>r.grade.toUpperCase()===String(grade).toUpperCase());return row?Number(row.point):0;}
+function getCommentFromMark(mark){mark=parseFloat(mark)||0;const row=getPrimaryGrading().grades.find(r=>mark>=r.min&&mark<=r.max);return row?row.remark:'';}
+function getDivisionFromAgg(agg){const row=getPrimaryGrading().divisions.find(r=>agg>=r.min&&agg<=r.max);return row?row.label:'';
+}
+
+function calculateStudentStats(adm,subjects,marks){
+  let eotMarks=[],grades=[],coreMissing=[];const cls=(getData('students',[]).find(x=>String(x.adm)===String(adm))||{}).class||'';
+  const englishEntry=subjects.find(x=>x.name.toLowerCase()==='english');const englishData=englishEntry?marks[adm+'_'+englishEntry.name]:null;
+  const englishMark=englishData&&englishData.eot!==''&&englishData.eot!==null&&englishData.eot!==undefined&&Number.isFinite(Number(englishData.eot))?Number(englishData.eot):null;
+  subjects.forEach(sub=>{
+    let key=adm+'_'+sub.name,m=marks[key];const hasEot=m&&m.eot!==''&&m.eot!==null&&m.eot!==undefined&&Number.isFinite(Number(m.eot))&&Number(m.eot)>=0&&Number(m.eot)<=100;
+    const isCore=Array.isArray(sub.coreClasses)&&sub.coreClasses.includes(cls);
+    if(!hasEot){if(isCore)coreMissing.push(sub.name);return;}
+    let info=getSubjectGradePoint(adm,sub,marks,englishMark,cls);if(!info)return;
+    eotMarks.push(info.mark);grades.push({sub:sub.name,mark:info.mark,grade:info.grade,agg:info.point});
+  });
+  if(eotMarks.length===0)return {avg:0,total:0,agg:0,div:coreMissing.length?'Division U':'',best4Agg:0,totalMark:0,grades,marks:0,coreMissing};
+  let total=eotMarks.reduce((a,b)=>a+b,0),avg=(total/eotMarks.length).toFixed(2);
+  let sortedAggs=grades.map(x=>x.agg).sort((a,b)=>a-b),best4=sortedAggs.slice(0,4),best4Agg=best4.reduce((a,b)=>a+b,0);
+  let div=best4Agg?getDivisionFromAgg(best4Agg):'';const rules=getPrimarySpecialRules();
+  if(coreMissing.length){div='Division U';}
+  else if(isUpperPrimary(cls)){
+    const eng=grades.find(x=>x.sub.toLowerCase()==='english');const math=grades.find(x=>x.sub.toLowerCase()==='mathematics');
+    if(rules.englishF9Division&&eng&&String(eng.grade).toUpperCase()==='F9'){const d=String(div).toLowerCase();if(/division\s*i$/.test(d))div=divisionAt(2);else if(/division\s*ii$/.test(d))div=divisionAt(2);else if(/division\s*iii$/.test(d))div=divisionAt(3);else if(/division\s*iv$/.test(d))div=divisionAt(3);}
+    if(rules.mathF9Division&&math&&String(math.grade).toUpperCase()==='F9')div=lowerDivision(div,1,true);
+  }
+  return {avg,total,agg:best4Agg,div,best4Agg,totalMark:total,grades,marks:eotMarks.length,coreMissing};
+}
+
+function loadMarksTable(){
+  let sclass=m_class.value, subj=m_subject.value, testCount=parseInt(m_testCount.value)||2;
+  if(!subj) return;
+  let allStudents=getData('students',[]).filter(s=>s.class===sclass);
+  let marks=getData('marks',{});
+  if(allStudents.length===0){ tblMarks.innerHTML=`<tr><td style="padding:10px;color:red">No pupils in ${sclass}</td></tr>`; return; }
+  let header='<tr><th>Adm</th><th>Name</th>';
+  for(let i=1;i<=testCount;i++){ header+=`<th>Test ${i}</th>`; }
+  header+='<th>EOT /100</th><th>Grade</th><th>Agg</th><th>Comment</th></tr>';
+  let rows=''; let totals=[];
+  allStudents.forEach(s=>{
+    let key=s.adm+'_'+subj;
+    let m=marks[key]||{tests:[],eot:''};
+    if(!m.tests) m.tests=[];
+    let testsInputs='';
+    for(let i=0;i<testCount;i++){
+      let val=m.tests[i]??'';
+      testsInputs+=`<td><input data-adm="${s.adm}" data-field="test${i}" data-subj="${subj}" value="${val}" type="number" min="0" max="100" style="width:45px" oninput="updateRowCalcPrimary(this)"></td>`;
+    }
+    let eot=parseFloat(m.eot)||0;
+    if(m.eot!=='' && m.eot!==null && m.eot!==undefined && Number.isFinite(Number(m.eot))) totals.push(eot);
+    let hasEot=m.eot!=='' && m.eot!==null && m.eot!==undefined && Number.isFinite(Number(m.eot)); let grade=hasEot?getGradeFromMark(eot):'';
+    let agg=hasEot?getAggFromGrade(grade):'';
+    let com=hasEot?getCommentFromMark(eot):'';
+    rows+=`<tr><td>${s.adm}</td><td>${s.name}</td>${testsInputs}<td><input data-adm="${s.adm}" data-field="eot" data-subj="${subj}" value="${m.eot??''}" type="number" min="0" max="100" style="width:55px;background:#fff8e1;font-weight:bold" oninput="updateRowCalcPrimary(this)"></td><td class="grade-cell"><b>${grade}</b></td><td class="agg-cell">${agg}</td><td class="com-cell" style="font-size:8px">${com}</td></tr>`;
+  });
+  tblMarks.innerHTML=header+rows;
+  if(totals.length>0){ let avg=(totals.reduce((a,b)=>a+b,0)/totals.length).toFixed(2); document.getElementById('marksStats').innerHTML=`<b>${subj} - ${sclass}</b><br>EOT Avg: ${avg}<br>Total Pupils: ${allStudents.length}<br><small>Position based on EOT average</small>`; }
+}
+function updateRowCalcPrimary(input){
+  let row=input.closest('tr');
+  let eotInput=row.querySelector('input[data-field="eot"]');
+  let eot=parseFloat(eotInput.value)||0;
+  let grade=getGradeFromMark(eot);
+  let agg=getAggFromGrade(grade);
+  let com=getCommentFromMark(eot);
+  row.querySelector('.grade-cell').innerHTML=`<b>${eot?grade:''}</b>`;
+  row.querySelector('.agg-cell').innerText=eot?agg:'';
+  row.querySelector('.com-cell').innerText=eot?com:'';
+}
+function saveMarks(){
+  let inputs=document.querySelectorAll('#tblMarks input');
+  if(inputs.length===0) return alert('No pupils');
+  let marks=getData('marks',{});
+  let map={};
+  try { inputs.forEach(inp=>{
+    let adm=inp.dataset.adm, field=inp.dataset.field, subj=inp.dataset.subj;
+    if(inp.value!=='' && (!Number.isFinite(Number(inp.value)) || Number(inp.value)<0 || Number(inp.value)>100)){ throw new Error('Marks must be between 0 and 100.'); }
+    let key=adm+'_'+subj;
+    if(!map[key]) map[key]={tests:[...(marks[key]?.tests||[])],eot:marks[key]?.eot??''};
+    if(!marks[key]) marks[key]={tests:[],eot:''};
+    if(!map[key].tests) map[key].tests=[];
+    if(field.startsWith('test')){
+      let idx=parseInt(field.replace('test',''));
+      map[key].tests[idx]=inp.value;
+    } else if(field==='eot'){
+      map[key].eot=inp.value;
+    }
+  }); } catch(err) { return alert(err.message); }
+  Object.keys(map).forEach(k=>{
+    marks[k]=map[k];
+  });
+  setData('marks',marks);
+  logAction('Saved marks EOT');alert(`Saved ${Object.keys(map).length} pupils EOT marks`);loadMarksTable();
+}
+function importMarksExcel(){
+  let file=excelMarks.files[0]; if(!file) return alert('Select');let subj=m_subject.value; let sclass=m_class.value;if(!subj) return alert('Subject');
+  let reader=new FileReader();reader.onload=e=>{
+    let wb=XLSX.read(e.target.result,{type:'binary'});let ws=wb.Sheets[wb.SheetNames[0]];let data=XLSX.utils.sheet_to_json(ws);
+    let marks=getData('marks',{});
+    let allStudents=getData('students',[]).filter(s=>s.class===sclass).map(s=>s.adm);
+    let imported=0,skipped=0;
+    data.forEach(row=>{
+      let adm=String(row.Admission||row.ADM||'').trim();if(!adm) return;
+      if(!allStudents.includes(adm)){ skipped++; return; }
+      let eot=row.EOT||row.EOT_100||row.Marks||'';
+      let key=adm+'_'+subj;
+      marks[key]={tests:[],eot:String(eot)};imported++;
+    });
+    setData('marks',marks);loadMarksTable();alert(`Imported ${imported}, Skipped ${skipped}`);
+  };reader.readAsBinaryString(file);
+}
+function exportMarksExcel(){
+  let sclass=m_class.value, subj=m_subject.value;
+  let allStudents=getData('students',[]).filter(s=>s.class===sclass);
+  if(allStudents.length===0) return alert('No pupils');
+  let marks=getData('marks',{});
+  let data=allStudents.map(s=>{
+    let key=s.adm+'_'+subj; let m=marks[key]||{tests:[],eot:''};
+    let eot=parseFloat(m.eot)||0;
+    let grade=eot?getGradeFromMark(eot):'';
+    let agg=grade?getAggFromGrade(grade):'';
+    return {Admission:s.adm,Name:s.name,Tests:(m.tests||[]).join(','),EOT:m.eot,Grade:grade,Agg:agg,Comment:getCommentFromMark(eot)};
+  });
+  let ws=XLSX.utils.json_to_sheet(data);let wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Marks');XLSX.writeFile(wb,`${sclass}_${subj}_marks.xlsx`);
+}
+function downloadSampleMarks(){let ws=XLSX.utils.json_to_sheet([{Admission:'P1-001',Name:'ABEL',EOT:'85'}]);let wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Template');XLSX.writeFile(wb,'marks_template_primary.xlsx');}
+function exportMarksAllExcel(){let marks=getData('marks',{});let data=Object.keys(marks).map(k=>{let parts=k.split('_');let adm=parts[0];let subj=parts.slice(1).join('_');let m=marks[k];return {Admission:adm,Subject:subj,EOT:m.eot||'',Grade:m.eot?getGradeFromMark(m.eot):'',Agg:m.eot?getAggFromGrade(getGradeFromMark(m.eot)):''}});let ws=XLSX.utils.json_to_sheet(data);let wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'AllMarks');XLSX.writeFile(wb,'all_marks_primary_export.xlsx');}
+
+function addRequirement(){
+  let sclass=req_class.value, term=req_term.value, year=req_year.value, item=req_item.value.trim();
+  if(!item) return alert('Enter requirement');
+  let key='requirements_'+sclass+'_'+term+'_'+year;
+  let list=getData(key,[]);
+  list.push(item);
+  setData(key,list);
+  req_item.value='';
+  loadRequirements();
+  logAction('Added requirement '+item+' for '+sclass);
+}
+function loadRequirements(){
+  let sclass=req_class.value, term=req_term.value, year=req_year.value;
+  let keys=Object.keys(LS).filter(k=>k.startsWith('requirements_'));
+  let html='';
+  if(keys.length===0){ requirementsList.innerHTML='<p style="color:gray">No requirements yet</p>'; return; }
+  keys.forEach(k=>{
+    let list=getData(k,[]);
+    let parts=k.replace('requirements_','').split('_');
+    html+=`<div style="border:1px solid #ccc;border-radius:6px;padding:6px;margin:4px 0"><b>${k.replace('requirements_','').replace(/_/g,' ')}</b> (${list.length} items)<br><ul style="margin-left:15px">${list.map((it,i)=>`<li>${it} <button onclick="delReq('${k}',${i})" style="color:red;border:none;background:none;cursor:pointer">X</button></li>`).join('')}</ul></div>`;
+  });
+  requirementsList.innerHTML=html;
+}
+function delReq(key,idx){ let list=getData(key,[]); list.splice(idx,1); setData(key,list); loadRequirements(); }
+function clearRequirements(){ let sclass=req_class.value, term=req_term.value, year=req_year.value; let key='requirements_'+sclass+'_'+term+'_'+year; if(confirm('Clear all for '+sclass+' '+term+' '+year+'?')){ setData(key,[]); loadRequirements(); } }
+function getRequirementsForReport(sclass,term,year){
+  let specific=getData('requirements_'+sclass+'_'+term+'_'+year,[]);
+  let allClass=getData('requirements_ALL CLASSES_'+term+'_'+year,[]);
+  return [...specific,...allClass];
+}
+
+function loadCommentsSheet(){
+  let sclass=document.getElementById('c_class').value;let term=document.getElementById('c_term').value;let year=document.getElementById('c_year').value;
+  let students=getData('students',[]).filter(s=>s.class===sclass);let marks=getData('marks',{});let subjectsAll=getData('subjects',[]).filter(sub=>!sub.classes||sub.classes.includes(sclass));
+  let commentsData=getData('comments_'+sclass+'_'+term+'_'+year,{});
+  if(students.length===0){document.getElementById('commentsSheetOutput').innerHTML=`<div style="padding:10px;color:red;text-align:center">No pupils in ${sclass}</div>`;return;}
+  let ranked=students.map(st=>{
+    let stat=calculateStudentStats(st.adm,subjectsAll,marks);
+    return {student:st, stat, avg:parseFloat(stat.avg)||0};
+  }).sort((a,b)=>b.avg-a.avg);
+  let html=`<div class="perf-sheet" id="perfSheetPrint"><div style="text-align:center;border-bottom:2px solid #000;padding-bottom:4px;margin-bottom:6px"><h2 style="margin:0;font-size:12px">FEAVIAL PRIMARY MANAGER</h2><h3 style="margin:2px 0;text-decoration:underline;font-size:10px">PERFORMANCE SHEET - ${sclass} - TERM ${term} - ${year}</h3></div><table><tr><th>Pos</th><th>Adm</th><th>Name</th><th>Total</th><th>Avg</th><th>Agg Best4</th><th>Div</th><th>Class Teacher</th><th>Co-curricular (DOS)</th><th>H/T</th></tr>`;
+  ranked.forEach((r,idx)=>{
+    let adm=r.student.adm;let com=commentsData[adm]||{classTeacher:'',coCurricular:'',dos:'',headTeacher:''};
+    let posStr=getOrdinal(idx+1);
+    html+=`<tr><td><b>${posStr}</b></td><td>${adm}</td><td>${r.student.name}</td><td><b>${r.stat.totalMark}</b></td><td><b>${r.stat.avg}</b></td><td><b>${r.stat.agg||''}</b></td><td>${r.stat.div||''}</td><td><textarea data-adm="${adm}" data-field="classTeacher" style="height:40px;font-size:9px">${com.classTeacher||''}</textarea></td><td><textarea data-adm="${adm}" data-field="coCurricular" style="height:40px;font-size:9px">${com.coCurricular||''}</textarea></td><td><textarea data-adm="${adm}" data-field="headTeacher" style="height:40px;font-size:9px">${com.headTeacher||''}</textarea></td></tr>`;
+  });
+  html+=`</table><div style="margin-top:8px;border:1px solid #000;padding:6px;font-size:9px"><h4>Summary - Position is based on EOT average</h4><div id="perfSummaryInner"></div></div></div>`;
+  document.getElementById('commentsSheetOutput').innerHTML=html;
+  let avgs=ranked.map(r=>r.avg).filter(a=>a>0);let classAvg=avgs.length?(avgs.reduce((a,b)=>a+b,0)/avgs.length).toFixed(2):'0.00';
+  let best=ranked[0]; let worst=ranked[ranked.length-1];
+  let divCounts={};ranked.forEach(r=>{let d=r.stat.div;if(!divCounts[d])divCounts[d]=0;divCounts[d]++;});
+  let summaryHTML=`<b>Class:</b> ${sclass} | <b>Term:</b> ${term} ${year} | <b>Total:</b> ${ranked.length} | <b>Class Avg:</b> ${classAvg}<br><b>Best:</b> ${best?best.student.name+' - Avg '+best.stat.avg+' - Agg '+best.stat.agg:''} | <b>Worst:</b> ${worst?worst.student.name+' - '+worst.stat.avg:''}<br><b>Division Dist:</b> ${Object.keys(divCounts).map(k=>`${k}: ${divCounts[k]}`).join(', ')}`;
+  document.getElementById('commentsSummary').innerHTML=summaryHTML;let perfInner=document.querySelector('#perfSheetPrint #perfSummaryInner');if(perfInner) perfInner.innerHTML=summaryHTML;
+}
+function getOrdinal(n){ let s=["th","st","nd","rd"]; let v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
+function saveCommentsSheet(){let sclass=document.getElementById('c_class').value;let term=document.getElementById('c_term').value;let year=document.getElementById('c_year').value;let key='comments_'+sclass+'_'+term+'_'+year;let commentsData=getData(key,{});let textareas=document.querySelectorAll('#commentsSheetOutput textarea');textareas.forEach(ta=>{let adm=ta.dataset.adm; let field=ta.dataset.field;if(!commentsData[adm]) commentsData[adm]={classTeacher:'',coCurricular:'',headTeacher:''};commentsData[adm][field]=ta.value;});setData(key,commentsData);alert(`Saved ${Object.keys(commentsData).length} comments`);}
+
+function loadFeesTable(){let sclass=document.getElementById('f_class').value;let term=document.getElementById('f_term').value;let year=document.getElementById('f_year').value;let students=getData('students',[]).filter(s=>s.class===sclass);let feesData=getData('fees_'+sclass+'_'+term+'_'+year,{});let html='<tr><th>Adm</th><th>Name</th><th>Fees Cleared?</th><th>Status</th></tr>';students.forEach(s=>{let cleared=feesData[s.adm]||false;html+=`<tr><td>${s.adm}</td><td>${s.name}</td><td><input type="checkbox" data-adm="${s.adm}" ${cleared?'checked':''} style="width:20px;height:20px"></td><td>${cleared?'<span style="color:green">PAID ✅</span>':'<span style="color:red">NOT PAID ❌</span>'}</td></tr>`;});document.getElementById('tblFees').innerHTML=html;updateFeesSummary();}
+function saveFeesTable(){let sclass=document.getElementById('f_class').value;let term=document.getElementById('f_term').value;let year=document.getElementById('f_year').value;let key='fees_'+sclass+'_'+term+'_'+year;let feesData=getData(key,{});document.querySelectorAll('#tblFees input[type=checkbox]').forEach(ch=>{feesData[ch.dataset.adm]=ch.checked;});setData(key,feesData);updateFeesSummary();alert('Fees saved');loadFeesTable();}
+function markAllFeesPaid(){document.querySelectorAll('#tblFees input[type=checkbox]').forEach(ch=>ch.checked=true);saveFeesTable();}
+function updateFeesSummary(){let sclass=document.getElementById('f_class')?.value||'P1';let term=document.getElementById('f_term')?.value||'ONE';let year=document.getElementById('f_year')?.value||'2026';let feesData=getData('fees_'+sclass+'_'+term+'_'+year,{});let students=getData('students',[]).filter(s=>s.class===sclass);let paid=students.filter(st=>feesData[st.adm]===true).length;let total=students.length;let el=document.getElementById('feesSummary');if(el)el.innerHTML=`${sclass} ${term} ${year}<br>Paid: ${paid}/${total} | Not: ${total-paid}`;}
+
+function loadAttendanceTable(){let sclass=document.getElementById('a_class').value;let date=document.getElementById('a_date').value;if(!date){let today=new Date().toISOString().split('T')[0];document.getElementById('a_date').value=today;date=today;}let students=getData('students',[]).filter(s=>s.class===sclass);let attData=getData('attendance_'+sclass+'_'+date,{});let html='<tr><th>Adm</th><th>Name</th><th>Present?</th></tr>';students.forEach(s=>{let present=attData[s.adm]!==undefined?attData[s.adm]:true;html+=`<tr><td>${s.adm}</td><td>${s.name}</td><td><input type="checkbox" data-adm="${s.adm}" ${present?'checked':''} style="width:20px;height:20px"></td></tr>`;});document.getElementById('tblAttendance').innerHTML=html;}
+function saveAttendance(){let sclass=document.getElementById('a_class').value;let date=document.getElementById('a_date').value;let key='attendance_'+sclass+'_'+date;let data={};document.querySelectorAll('#tblAttendance input[type=checkbox]').forEach(ch=>{data[ch.dataset.adm]=ch.checked;});setData(key,data);alert('Saved '+date);generateAttendanceSummary();}
+function markAllPresent(){document.querySelectorAll('#tblAttendance input[type=checkbox]').forEach(ch=>ch.checked=true);}
+function generateAttendanceSummary(){let sclass=document.getElementById('a_class').value;let students=getData('students',[]).filter(s=>s.class===sclass);let allKeys=Object.keys(LS).filter(k=>k.startsWith('attendance_'+sclass+'_') && !k.includes('dates'));let totalDays=allKeys.length;let summary={};students.forEach(s=>{summary[s.adm]={present:0,total:totalDays};});allKeys.forEach(k=>{let dayData=getData(k,{});students.forEach(s=>{if(dayData[s.adm]) summary[s.adm].present++;});});let html=`<b>${sclass} - Days: ${totalDays}</b><br><table><tr><th>Adm</th><th>Name</th><th>Present</th><th>Total</th><th>%</th></tr>`;students.forEach(s=>{let d=summary[s.adm];let perc=d.total?((d.present/d.total)*100).toFixed(1):0;html+=`<tr><td>${s.adm}</td><td>${s.name}</td><td>${d.present}</td><td>${d.total}</td><td>${perc}%</td></tr>`;});html+=`</table>`;document.getElementById('attendanceSummaryOutput').innerHTML=html;document.getElementById('attSummary').innerHTML=`${sclass}<br>Days: ${totalDays} | Pupils: ${students.length}`;}
+function getAttendancePercent(adm,sclass){let allKeys=Object.keys(LS).filter(k=>k.startsWith('attendance_'+sclass+'_') && !k.includes('dates'));let total=allKeys.length;if(total===0)return 'N/A';let present=0;allKeys.forEach(k=>{let dayData=getData(k,{});if(dayData[adm]) present++;});return ((present/total)*100).toFixed(1)+'% ('+present+'/'+total+')';}
+function getFeesStatus(adm,sclass,term,year){let feesData=getData('fees_'+sclass+'_'+term+'_'+year,{});return feesData[adm]?'PAID':'NOT PAID';}
+
+function loadAnalysis(){
+  let sclass=document.getElementById('an_class').value;let term=document.getElementById('an_term').value;let year=document.getElementById('an_year').value;
+  let students=getData('students',[]).filter(s=>s.class===sclass);let subjectsAll=getData('subjects',[]).filter(sub=>!sub.classes||sub.classes.includes(sclass));let marks=getData('marks',{});let staff=getData('staff',[]);
+  if(students.length===0){document.getElementById('analysisOutput').innerHTML='No pupils';return;}
+  let analysis={};subjectsAll.forEach(sub=>{analysis[sub.name]={totals:[],best:0,worst:100,pass:0,total:0};});
+  students.forEach(s=>{
+    subjectsAll.forEach(sub=>{
+      let key=s.adm+'_'+sub.name;let m=marks[key];
+      if(m && m.eot!=='' && m.eot!==null && m.eot!==undefined && Number.isFinite(Number(m.eot))){let tot=Number(m.eot);{let a=analysis[sub.name];a.totals.push(tot);a.total++;if(tot>=50)a.pass++;if(tot>a.best)a.best=tot;if(tot<a.worst)a.worst=tot;}}
+    });
+  });
+  let html=`<h4>Subject Analysis - ${sclass} Term ${term} ${year} - EOT Based</h4><table><tr><th>Subject</th><th>Avg</th><th>High</th><th>Low</th><th>Pass % (50+)</th><th>Teacher</th></tr>`;
+  let bestSub='',worstSub='',bestAvg=0,worstAvg=100;
+  Object.keys(analysis).forEach(subName=>{
+    let a=analysis[subName];if(a.totals.length===0)return;
+    let avg=(a.totals.reduce((x,y)=>x+y,0)/a.totals.length).toFixed(2);
+    let passRate=a.total?((a.pass/a.total)*100).toFixed(1):0;
+    let teacher=staff.find(st=> (st.subjects||'').includes(subName));let teacherName=teacher?teacher.name+' ('+teacher.initials+')':'-';
+    html+=`<tr><td>${subName}</td><td><b>${avg}</b></td><td>${a.best.toFixed(0)}</td><td>${a.worst.toFixed(0)}</td><td>${passRate}%</td><td>${teacherName}</td></tr>`;
+    if(parseFloat(avg)>bestAvg){bestAvg=parseFloat(avg);bestSub=subName;}if(parseFloat(avg)<worstAvg){worstAvg=parseFloat(avg);worstSub=subName;}
+  });
+  html+=`</table><div style="margin-top:8px;background:#e8f5e9;padding:8px;border-radius:6px"><b>Best:</b> ${bestSub} (${bestAvg}) | <b>Worst:</b> ${worstSub} (${worstAvg}) | <b>Grading:</b> D1 90-100, D2 80-89, C3 70-79, C4 60-69, C5 55-59, C6 50-54, P7 45-49, P8 35-44, F9 0-34</div>`;
+  document.getElementById('analysisOutput').innerHTML=html;
+}
+
+function buildReportHTML(s,school,subjects,marks,staff,term,year,sclass,extra,positionInfo){
+let closeDate=extra?.close||''; let openDate=extra?.open||''; let closeNext=extra?.closeNext||'';
+let comKey='comments_'+sclass+'_'+term+'_'+year;let allComments=getData(comKey,{});let studCom=allComments[s.adm]||{classTeacher:'',coCurricular:'',headTeacher:''};
+let classTeacherObj=staff.find(st=> st.classTeacherOf===sclass); let classTeacherName=classTeacherObj?.name||''; let classTeacherInit=classTeacherObj?.initials||'';
+let dosName=staff.find(st=> (st.roles||[st.role]).includes('DOS'))?.name||''; let headName=staff.find(st=> (st.roles||[st.role]).includes('Headteacher'))?.name||'';
+let watermarkSrc=school.badge||'';let stats=calculateStudentStats(s.adm,subjects,marks);let reportDesign=getPrimaryReportDesign();let reportInline=`font-family:${reportDesign.font};font-size:${reportDesign.fontSize}px;background:${reportDesign.background};padding:${reportDesign.padding}mm;border:${reportDesign.borderWidth}px ${reportDesign.borderStyle} ${reportDesign.borderColor};`;let customWatermark=reportDesign.watermark?`<div style="position:absolute;top:45%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:32px;font-weight:bold;color:rgba(80,80,80,${reportDesign.opacity});white-space:nowrap;z-index:0;pointer-events:none">${reportDesign.watermark.replace(/[&<>]/g,'')}</div>`:'';
+let rows=subjects.map(sub=>{
+  let key=s.adm+'_'+sub.name; let m=marks[key]||{tests:[],eot:''};
+  let eot=Number(m.eot)||0;
+  let hasEot=m.eot!=='' && m.eot!==null && m.eot!==undefined && Number.isFinite(Number(m.eot));
+  let studentClass=s.class||sclass;let coreMissing=Array.isArray(sub.coreClasses)&&sub.coreClasses.includes(studentClass)&&!hasEot;
+  let studentStats=stats;
+  let adjusted=hasEot?studentStats.grades?.find(x=>x.sub===sub.name):null;
+  let grade=hasEot?(adjusted?.grade||getGradeFromMark(eot)):(coreMissing?'X':'');
+  let agg=hasEot?(adjusted?.agg??getAggFromGrade(grade)):(coreMissing?'X':'');
+  let com=hasEot?getCommentFromMark(eot):(coreMissing?'CORE SUBJECT NOT GRADED':'');
+  let testsStr=(m.tests||[]).filter(t=>t!=='').join(', ')||'-';
+  let t=staff.find(st=>{ let cls=st.teachingClasses||st.classes||[st.class]; if(!cls.includes(sclass) && !cls.includes('ALL') && st.class!=='ALL') return false; return (st.subjects||'').split(',').map(x=>x.trim()).includes(sub.name); });
+  let initials=t? (t.initials||sub.name.substring(0,2).toUpperCase()) : sub.name.substring(0,2).toUpperCase();
+  return `<tr${coreMissing?' style="background:#ffe0e0;color:#a00000;font-weight:bold"':''}><td><b>${escapePrimaryHTML(sub.name)}</b></td><td>${testsStr}</td><td><b>${hasEot?eot:''}</b></td><td>${grade}</td><td>${agg}</td><td>${com}</td><td>${initials}</td></tr>`;
+}).join('');
+let posText=positionInfo?`Class position ${positionInfo.posStr} out of ${positionInfo.total} pupils`:'';if(stats.coreMissing?.length)posText+=' | CORE SUBJECT MISSING: '+stats.coreMissing.join(', ')+' — UNGRADED (X)';
+let requirements=getRequirementsForReport(sclass,term,year);
+let secretaryInfo=getData('primarySecretaryReportInfo',{schoolNotice:'',pupilNotes:{}});
+let secretaryPupilNote=secretaryInfo.pupilNotes?.[String(s.adm)+'_'+term+'_'+year]||'';
+let secretaryHTML=(secretaryInfo.schoolNotice||secretaryPupilNote)?`<div data-report-section="secretary-info" style="border:1px solid #333;background:#f7f7f7;padding:5px;margin-top:5px;font-size:8px"><b>ADDITIONAL SCHOOL INFORMATION</b>${secretaryInfo.schoolNotice?`<div><b>School Notice:</b> ${escapePrimaryHTML(secretaryInfo.schoolNotice).replace(/\\n/g,'<br>')}</div>`:''}${secretaryPupilNote?`<div style="margin-top:3px"><b>Information for this Pupil:</b> ${escapePrimaryHTML(secretaryPupilNote).replace(/\\n/g,'<br>')}</div>`:''}</div>`:'';
+let reqHTML=requirements.length?`<div data-report-section="requirements" style="margin-top:6px;border:1px solid #000;padding:4px;font-size:9px"><b>School Requirements for Next Term (${sclass} ${term} ${year}):</b><br><ul style="margin-left:15px">${requirements.map(r=>`<li>${r}</li>`).join('')}</ul></div>`:'';
+let gradingHTML=`<div data-report-section="grading-key" style="font-size:8px;border:1px solid #000;padding:4px;margin-top:5px"><b style="display:block;text-align:center;margin-bottom:3px">GRADING AND AGGREGATE GUIDE</b><table style="width:100%;border-collapse:collapse;text-align:center"><tr><th colspan="4">MARKS GRADING</th></tr><tr><th>Marks (%)</th><th>Grade</th><th>Grade Point</th><th>Remark</th></tr>${getPrimaryGrading().grades.slice().sort((a,b)=>b.min-a.min).map(r=>`<tr><td>${r.min}–${r.max}</td><td>${escapePrimaryHTML(r.grade)}</td><td>${r.point}</td><td>${escapePrimaryHTML(r.remark)}</td></tr>`).join('')}</table><table style="width:100%;border-collapse:collapse;text-align:center;margin-top:3px"><tr><th colspan="2">AGGREGATE BEST 4</th></tr><tr><th>Aggregate</th><th>Division</th></tr>${getPrimaryGrading().divisions.slice().sort((a,b)=>a.min-b.min).map(r=>`<tr><td>${r.min}–${r.max}</td><td>${escapePrimaryHTML(r.label)}</td></tr>`).join('')}</table><div style="margin-top:3px;text-align:center"><b>Position is based on EOT average.</b></div></div>`;
+let attendancePerc=getAttendancePercent(s.adm,sclass);let feesStat=getFeesStatus(s.adm,sclass,term,year);
+let activated=isActivated();
+let notActivatedWatermark=activated?'':`<div style="position:absolute;top:45%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:28px;color:rgba(255,0,0,0.18);font-weight:bold;border:3px solid rgba(255,0,0,0.18);padding:8px 16px;z-index:5;pointer-events:none;text-align:center">NOT ACTIVATED<br>Pay Merchant 32828705<br>UGX 300,000</div>`;
+let qrData=`FEAVIAL PRIMARY VERIFIED\nSchool: ${school.name}\nPupil: ${s.name}\nAdm: ${s.adm}\nClass: ${sclass}\nTerm: ${term} ${year}\nTotal: ${stats.totalMark} Avg: ${stats.avg} Agg Best4: ${stats.agg} Div: ${stats.div}\nPosition: ${posText}\nAttendance: ${attendancePerc}\nFees: ${feesStat}\nRequirements: ${requirements.join('; ')}\nActivation status: ${activated?'ACTIVE':'INACTIVE'}\nVerified: ${new Date().toLocaleDateString()}`;
+let qrId='qr_'+s.adm+'_'+Date.now();
+return `<div class="report-paper" style="${reportInline}"><div class="watermark"><img src="${watermarkSrc}"></div>${customWatermark}${notActivatedWatermark}
+<div class="report-header" data-report-section="school-heading"><img src="${school.badge||''}" style="height:50px;width:50px"><div style="text-align:center;flex:1"><h2 style="font-size:16px;margin:0" data-report-section="school-heading">${escapePrimaryHTML(school.name||"")}</h2><div style="font-size:8px" data-report-section="school-contact">${escapePrimaryHTML(school.box||"")}<br>${escapePrimaryHTML(school.dist||"")}</div></div>${s.photo?`<img src="${s.photo}" style="height:50px;width:50px;border:1px solid #000;object-fit:cover">`:`<div style="height:50px;width:50px;border:1px solid #000"></div>`}</div>
+<h2 data-report-section="report-title" style="text-align:center;text-decoration:underline;margin:4px 0;font-size:11px">${getLevelFromClass(sclass).toUpperCase()} TERMLY REPORT - ${sclass}</h2>
+<div class="student-centered" data-report-section="pupil-details">NAME: <b><u>${s.name}</u></b> &nbsp; SEX: <b><u>${s.gender}</u></b> &nbsp; CLASS: <b><u>${s.class}</u></b><br>LIN: <b><u>${s.lin||''}</u></b> &nbsp; YEAR: <b><u>${year}</u></b> &nbsp; TERM: <b><u>${term}</u></b> &nbsp; LEVEL: <b><u>${getLevelFromClass(sclass)}</u></b><br><b style="color:#0f3d2e">${posText}</b></div>
+<table data-report-section="marks-table" style="position:relative;z-index:1"><tr><th>SUBJECT</th><th>Tests (School Sets)</th><th>EOT /100</th><th>Grade</th><th>Agg</th><th>Auto Comment</th><th>Init</th></tr>${rows}
+<tr data-report-section="summary-row" style="background:#f0f0f0;font-weight:bold"><td colspan="2">TOTAL / AVERAGE / BEST 4 AGGREGATE / DIVISION</td><td><b>${stats.totalMark}</b></td><td colspan="2"><b>Avg: ${stats.avg} | Agg Best4: ${stats.agg} | ${stats.div}</b></td><td colspan="2"><b>${posText}</b></td></tr>
+</table>
+${gradingHTML}
+<div data-report-section="comments" style="margin-top:6px;border:1.5px solid #000;position:relative;z-index:1"><table><tr><th style="width:25%"></th><th>COMMENTS</th><th style="width:20%">Name & Sign</th></tr>
+<tr><td>Class Teacher</td><td style="height:30px">${studCom.classTeacher||''}</td><td>${classTeacherName} (${classTeacherInit})</td></tr>
+<tr><td>Co-curricular / DOS</td><td style="height:30px">${studCom.coCurricular||''}</td><td>${dosName}</td></tr>
+<tr><td>Head Teacher</td><td style="height:30px">${studCom.headTeacher||''}</td><td>${headName}</td></tr>
+</table></div>
+${secretaryHTML}
+${reqHTML}
+<div data-report-section="term-dates" style="margin-top:6px;border-top:1px dashed #000;padding-top:4px;font-size:8px;position:relative;z-index:1"><b>Closing:</b> <u>${closeDate||'___'}</u> <b>Opening:</b> <u>${openDate||'___'}</u> <b>Closing Next:</b> <u>${closeNext||'___'}</u></div>
+<div data-report-section="school-motto" style="text-align:center;margin-top:6px;font-style:italic;font-weight:bold;font-size:9px;position:relative;z-index:1">${escapePrimaryHTML(school.motto||"")}</div>
+<div class="qr-box" data-report-section="qr-section"><div id="${qrId}"></div><div style="font-size:6px;text-align:center;margin-top:1px">SCAN TO VERIFY<br>FEAVIAL PRIMARY</div></div>
+<div style="display:none" class="qr-data">${qrData}</div>
+</div>`;}
+
+function loadSecretaryReportInfo(){
+ const data=getData('primarySecretaryReportInfo',{schoolNotice:'',pupilNotes:{}});
+ document.getElementById('secretary_school_notice').value=data.schoolNotice||'';
+ const adm=document.getElementById('r_student')?.value||'';
+ const term=document.getElementById('r_term')?.value||'ONE';
+ const year=document.getElementById('r_year')?.value||new Date().getFullYear();
+ document.getElementById('secretary_pupil_note').value=data.pupilNotes?.[String(adm)+'_'+term+'_'+year]||'';
+}
+function saveSecretaryReportInfo(){
+ const data=getData('primarySecretaryReportInfo',{schoolNotice:'',pupilNotes:{}});
+ data.schoolNotice=document.getElementById('secretary_school_notice').value.trim();
+ const adm=document.getElementById('r_student')?.value||'';
+ const term=document.getElementById('r_term')?.value||'ONE';
+ const year=document.getElementById('r_year')?.value||new Date().getFullYear();
+ if(adm){const key=String(adm)+'_'+term+'_'+year;data.pupilNotes=data.pupilNotes||{};data.pupilNotes[key]=document.getElementById('secretary_pupil_note').value.trim();}
+ setData('primarySecretaryReportInfo',data);
+ document.getElementById('secretaryInfoStatus').textContent='Saved. Generate or regenerate the report card to include the information.';
+ logAction('Secretary updated additional report card information');
+}
+function loadReportStudents(){let sclass=r_class.value;let students=getData('students',[]).filter(s=>s.class===sclass);r_student.innerHTML='';students.forEach(s=>{r_student.innerHTML+=`<option value="${s.adm}">${s.name} - ${s.adm}</option>`})}
+function getRankedPositions(sclass){
+  let students=getData('students',[]).filter(s=>s.class===sclass);
+  let subjectsAll=getData('subjects',[]).filter(sub=>!sub.classes||sub.classes.includes(sclass));
+  let marks=getData('marks',{});
+  let ranked=students.map(st=>{
+    let stat=calculateStudentStats(st.adm,subjectsAll,marks);
+    return {adm:st.adm,avg:parseFloat(stat.avg)||0,stat};
+  }).sort((a,b)=>b.avg-a.avg);
+  let map={};
+  ranked.forEach((r,idx)=>{
+    map[r.adm]={pos:idx+1,posStr:getOrdinal(idx+1),total:ranked.length,avg:r.avg,stat:r.stat};
+  });
+  return map;
+}
+function generateReport(){
+  let sclass=r_class.value,adm=r_student.value,term=r_term.value,year=r_year.value;
+  let closeD=document.getElementById('r_close')?.value||''; let openD=document.getElementById('r_open')?.value||''; let closeNext=document.getElementById('r_close_next')?.value||'';
+  let s=getData('students',[]).find(x=>x.adm===adm);if(!s)return alert('Select pupil');
+  let school=getData('schoolInfo',{name:'KIKATSI PRIMARY SCHOOL',box:'P.O.BOX 1762',dist:'KIRUHURA',motto:'STRIVE FOR EXCELLENCE',badge:''});
+  let subjects=getData('subjects',[]).filter(sub=>!sub.classes||sub.classes.includes(sclass));
+  if(subjects.length===0) subjects=getData('subjects',[]);
+  let marks=getData('marks',{});let staff=getData('staff',[]);
+  let positions=getRankedPositions(sclass);
+  let posInfo=positions[adm];
+  let html=buildReportHTML(s,school,subjects,marks,staff,term,year,sclass,{close:closeD,open:openD,closeNext:closeNext},posInfo);
+  reportOutput.innerHTML=html;applyPrimaryReportStylesToDOM();
+  setTimeout(()=>{document.querySelectorAll('[id^=qr_]').forEach(el=>{let qrDataEl=el.parentElement.parentElement.querySelector('.qr-data');if(qrDataEl&&el.innerHTML===''){new QRCode(el,{text:qrDataEl.innerText,width:80,height:80});}});},500);
+  logAction('Generated primary report for '+s.name+' Pos '+posInfo.posStr+' of '+posInfo.total);
+}
+function generateBulkReports(){
+  let sclass=b_class.value,term=b_term.value,year=b_year.value;
+  let closeD=document.getElementById('b_close')?.value||''; let openD=document.getElementById('b_open')?.value||''; let closeNext=document.getElementById('b_close_next')?.value||'';
+  let school=getData('schoolInfo',{name:'KIKATSI PRIMARY SCHOOL',box:'P.O.BOX 1762',dist:'KIRUHURA',motto:'STRIVE FOR EXCELLENCE',badge:''});
+  let subjectsAll=getData('subjects',[]).filter(sub=>!sub.classes||sub.classes.includes(sclass));
+  let marks=getData('marks',{});let staff=getData('staff',[]);
+  let students=getData('students',[]).filter(s=>s.class===sclass);if(students.length===0)return alert('No pupils');
+  let positions=getRankedPositions(sclass);
+  let ranked=students.map(st=>positions[st.adm]).sort((a,b)=>a.pos-b.pos);
+  let allHtml=ranked.map(posInfo=>{
+    const pupil=students.find(x=>String(x.adm)===String(posInfo.adm));
+    return pupil ? buildReportHTML(pupil,school,subjectsAll,marks,staff,term,year,sclass,{close:closeD,open:openD,closeNext:closeNext},posInfo) : '';
+  }).join('');
+  bulkOutput.innerHTML=allHtml;applyPrimaryReportStylesToDOM();
+  setTimeout(()=>{document.querySelectorAll('[id^=qr_]').forEach(el=>{let qrDataEl=el.parentElement.parentElement.querySelector('.qr-data');if(qrDataEl&&el.innerHTML===''){new QRCode(el,{text:qrDataEl.innerText,width:80,height:80});}});},800);
+  logAction('Bulk primary generated '+ranked.length);alert('Generated '+ranked.length+' reports ranked by EOT avg - Position 1st out of '+students.length);
+}
+
+function exportFullBackup(){let data={};for(let i=0;i<LS.length;i++){let k=LS.key(i);data[k]=LS.getItem(k);}let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});let url=URL.createObjectURL(blob);let a=document.createElement('a');a.href=url;a.download='FEAVIAL_PRIMARY_BACKUP_'+new Date().toISOString().split('T')[0]+'.json';a.click();setData('lastBackup',new Date().toLocaleString());updateBackupInfo();logAction('Full backup primary');}
+function importFullBackup(){let file=document.getElementById('restoreFile').files[0];if(!file)return alert('Select a FEAVIAL JSON backup');let reader=new FileReader();reader.onload=e=>{try{let data=JSON.parse(e.target.result);if(!data||typeof data!=='object'||Array.isArray(data)||!Object.keys(data).some(k=>['students','schoolInfo','subjects','staff','marks','secretaryCred'].includes(k)))return alert('This does not look like a valid FEAVIAL backup. Current data has not been changed.');if(confirm('Restore will overwrite all current FEAVIAL data in this browser. Download a backup of the current data first if needed. Continue?')){LS.clear();Object.keys(data).forEach(k=>{if(typeof data[k]==='string')LS.setItem(k,data[k]);});alert('Restore complete. Reloading...');location.reload();}}catch(err){alert('Invalid backup file. Current data has not been changed.');}};reader.readAsText(file);}
+function updateBackupInfo(){
+  let last=getData('lastBackup','Never');
+  let el=document.getElementById('lastBackupInfo');if(el)el.innerText=last;
+  let act=getData('activated',false);
+  let actEl=document.getElementById('actInfo');
+  if(actEl)actEl.innerHTML=act?'<span style="color:green">✓ Activated</span>':'<span style="color:red">Not Activated</span>';
+  let actStatus=document.getElementById('activationStatus');
+  if(actStatus)actStatus.innerHTML=act?'<span style="color:green;font-weight:bold">✓ ACTIVATED — Watermark Removed</span>':'<span style="color:#a33">Not activated</span>';
+}
+function renderAudit(){let logs=getData('auditLogs',[]);let html='<tr><th>Time</th><th>User</th><th>Role</th><th>Action</th></tr>';logs.slice().reverse().forEach(l=>{html+=`<tr><td>${l.time}</td><td>${l.user}</td><td>${l.role}</td><td>${l.action}</td></tr>`;});document.getElementById('tblAudit').innerHTML=html;}
+function clearAuditLog(){if(confirm('Clear audit?')){setData('auditLogs',[]);renderAudit();}}
+function exportAuditLog(){let logs=getData('auditLogs',[]);let ws=XLSX.utils.json_to_sheet(logs);let wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Audit');XLSX.writeFile(wb,'audit_log_primary.xlsx');}
+function renderCharts(){
+  const students=getData('students',[]);
+  const marks=getData('marks',{});
+  const subjectsAll=getData('subjects',[]);
+  const classes=["Baby Class","Middle Class","Top Class","P1","P2","P3","P4","P5","P6","P7"];
+  const classAvgs=classes.map(cls=>{
+    const pupils=students.filter(s=>s.class===cls);
+    const averages=pupils.map(s=>{
+      const subjects=subjectsAll.filter(sub=>!sub.classes||sub.classes.includes(cls));
+      return Number(calculateStudentStats(s.adm,subjects,marks).avg)||0;
+    }).filter(v=>v>0);
+    return averages.length ? Number((averages.reduce((a,b)=>a+b,0)/averages.length).toFixed(2)) : 0;
+  });
+  const ctx=document.getElementById('classAvgChart');
+  if(ctx && typeof Chart!=='undefined'){
+    if(ctx.chart) ctx.chart.destroy();
+    ctx.chart=new Chart(ctx,{
+      type:'bar',
+      data:{labels:classes,datasets:[{label:'Class Average (EOT) %',data:classAvgs,backgroundColor:'#0f3d2e'}]},
+      options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,max:100}}}
+    });
+  }
+  const divCounts={};
+  students.forEach(s=>{
+    const subjects=subjectsAll.filter(sub=>!sub.classes||sub.classes.includes(s.class));
+    const stat=calculateStudentStats(s.adm,subjects,marks);
+    if(!stat.div || !stat.marks) return;
+    divCounts[stat.div]=(divCounts[stat.div]||0)+1;
+  });
+  const divCtx=document.getElementById('divChart');
+  if(divCtx && typeof Chart!=='undefined'){
+    if(divCtx.chart) divCtx.chart.destroy();
+    divCtx.chart=new Chart(divCtx,{
+      type:'pie',
+      data:{labels:Object.keys(divCounts),datasets:[{label:'Pupils by Division',data:Object.values(divCounts)}]},
+      options:{responsive:true,maintainAspectRatio:false}
+    });
+  }
+  updateFeesSummary();
+}
+
+// Primary edition: configurable report presentation, without changing primary grading rules.
+const PRIMARY_REPORT_DEFAULTS={font:'Arial, sans-serif',fontSize:9,padding:7,background:'#ffffff',borderStyle:'solid',borderColor:'#222222',borderWidth:1,watermark:'',opacity:0.08};
+function getPrimaryReportDesign(){return {...PRIMARY_REPORT_DEFAULTS,...getData('primaryReportDesign',{})};}
+function loadPrimaryReportDesign(){const d=getPrimaryReportDesign();const map={pr_font:d.font,pr_fontsize:d.fontSize,pr_padding:d.padding,pr_bg:d.background,pr_border:d.borderStyle,pr_bordercolor:d.borderColor,pr_borderwidth:d.borderWidth,pr_watermark:d.watermark,pr_opacity:d.opacity};Object.entries(map).forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.value=v;});}
+function savePrimaryReportDesign(){const d={font:pr_font.value,fontSize:Math.max(7,Math.min(15,Number(pr_fontsize.value)||9)),padding:Math.max(3,Math.min(18,Number(pr_padding.value)||7)),background:pr_bg.value,borderStyle:pr_border.value,borderColor:pr_bordercolor.value,borderWidth:Math.max(0,Math.min(6,Number(pr_borderwidth.value)||0)),watermark:pr_watermark.value.trim(),opacity:Math.max(0,Math.min(.25,Number(pr_opacity.value)||0))};setData('primaryReportDesign',d);logAction('Saved primary report design');alert('Primary report design saved.');}
+function resetPrimaryReportDesign(){if(!confirm('Reset report appearance to the default design?'))return;setData('primaryReportDesign',PRIMARY_REPORT_DEFAULTS);loadPrimaryReportDesign();logAction('Reset primary report design');}
+const PRIMARY_REPORT_SECTIONS=['school-heading','school-contact','report-title','pupil-details','marks-table','summary-row','grading-key','comments','requirements','term-dates','school-motto','qr-section'];
+function getPrimaryReportSectionStyles(){return getData('primaryReportSectionStyles',{});}
+function applyPrimaryReportSectionStyle(){const key=document.getElementById('rsec_target').value;const style={font:rsec_font.value,size:rsec_size.value?Math.max(6,Math.min(32,Number(rsec_size.value))):'',color:rsec_color.value,background:rsec_bg.value,align:rsec_align.value,border:rsec_border.value,borderColor:rsec_bordercolor.value,borderWidth:Math.max(0,Math.min(8,Number(rsec_borderwidth.value)||0)),bold:rsec_bold.checked,italic:rsec_italic.checked,underline:rsec_underline.checked};const all=getPrimaryReportSectionStyles();all[key]=style;setData('primaryReportSectionStyles',all);applyPrimaryReportStylesToDOM();logAction('Applied report section formatting: '+key);alert('Formatting applied and saved for this report section.');}
+function clearPrimaryReportSectionStyle(){const key=document.getElementById('rsec_target').value;const all=getPrimaryReportSectionStyles();delete all[key];setData('primaryReportSectionStyles',all);applyPrimaryReportStylesToDOM();logAction('Cleared report section formatting: '+key);}
+function applyPrimaryReportStylesToDOM(){const styles=getPrimaryReportSectionStyles();document.querySelectorAll('.report-paper [data-report-section]').forEach(el=>{const st=styles[el.getAttribute('data-report-section')];if(!st)return;if(st.font)el.style.fontFamily=st.font;if(st.size)el.style.fontSize=st.size+'px';if(st.color)el.style.color=st.color;if(st.background)el.style.backgroundColor=st.background;if(st.align)el.style.textAlign=st.align;if(st.border)el.style.border=st.border==='none'?'none':`${st.borderWidth}px ${st.border} ${st.borderColor}`;if(st.bold)el.style.fontWeight='bold';if(st.italic)el.style.fontStyle='italic';if(st.underline)el.style.textDecoration='underline';});}
+
+function updatePrimaryDocumentFields(){const type=pd_type.value;pd_pupil.innerHTML='';getData('students',[]).filter(x=>x.class===pd_class.value).sort((a,b)=>(a.name||'').localeCompare(b.name||'')).forEach(x=>{const o=document.createElement('option');o.value=x.adm;o.textContent=x.name+' ('+x.adm+')';pd_pupil.appendChild(o);});pd_body.style.display=['circular','admission','custom'].includes(type)?'block':'none';}
+function formatPrimaryDoc(cmd){pd_body.focus();document.execCommand(cmd,false,null);}
+function insertPrimaryDocTable(){pd_body.focus();document.execCommand('insertHTML',false,'<table border="1" style="border-collapse:collapse;width:100%"><tr><th>Item</th><th>Details</th></tr><tr><td>1</td><td>Enter details</td></tr><tr><td>2</td><td>Enter details</td></tr></table><p></p>');}
+function escapePrimaryHTML(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function sanitizePrimaryDocHTML(html){const box=document.createElement('div');box.innerHTML=html;box.querySelectorAll('script,iframe,object,embed,form').forEach(n=>n.remove());box.querySelectorAll('*').forEach(el=>{[...el.attributes].forEach(a=>{if(/^on/i.test(a.name)||((a.name==='href'||a.name==='src')&&/^\s*javascript:/i.test(a.value)))el.removeAttribute(a.name);});});return box.innerHTML;}
+function generatePrimaryDocument(){const type=pd_type.value,cls=pd_class.value,year=pd_year.value||new Date().getFullYear(),date=pd_date.value||new Date().toISOString().slice(0,10),school=getData('schoolInfo',{name:'FEAVIAL PRIMARY SCHOOL',box:'',dist:'',motto:'',badge:''});let body=sanitizePrimaryDocHTML(pd_body.innerHTML);let content='';const pupils=getData('students',[]).filter(x=>x.class===cls).sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+if(type==='classlist'){content='<h2>CLASS LIST — '+escapePrimaryHTML(cls)+'</h2><p>Academic Year: '+escapePrimaryHTML(year)+'</p><table><tr><th>No.</th><th>Admission No.</th><th>Pupil Name</th><th>Sex</th><th>LIN</th></tr>'+pupils.map((x,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapePrimaryHTML(x.adm)+'</td><td>'+escapePrimaryHTML(x.name)+'</td><td>'+escapePrimaryHTML(x.gender||'')+'</td><td>'+escapePrimaryHTML(x.lin||'')+'</td></tr>').join('')+'</table><p>Total Pupils: <b>'+pupils.length+'</b></p>';}
+else if(type==='requirements'){const req=getRequirementsForReport(cls,pd_term.value,year)||[];content='<h2>SCHOOL REQUIREMENTS — '+escapePrimaryHTML(cls)+'</h2><ul>'+req.map(x=>'<li>'+escapePrimaryHTML(x)+'</li>').join('')+'</ul>';}
+else if(type==='stafflist'){const staff=getData('staff',[]);content='<h2>SCHOOL STAFF LIST</h2><table><tr><th>No.</th><th>Name</th><th>Initials</th><th>Role</th><th>Class</th><th>Subjects</th></tr>'+staff.map((x,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapePrimaryHTML(x.name)+'</td><td>'+escapePrimaryHTML(x.initials)+'</td><td>'+escapePrimaryHTML((x.roles||[x.role]).filter(Boolean).join(', '))+'</td><td>'+escapePrimaryHTML((x.teachingClasses||x.classes||[x.class]).filter(Boolean).join(', '))+'</td><td>'+escapePrimaryHTML(x.subjects||'')+'</td></tr>').join('')+'</table>';}
+else if(type==='rollcall'){const att=getData('attendance_'+cls+'_'+date,null);content='<h2>DAILY ROLL-CALL SHEET</h2><p>Class: '+escapePrimaryHTML(cls)+' | Date: '+escapePrimaryHTML(date)+'</p><table><tr><th>No.</th><th>Admission</th><th>Pupil Name</th><th>Present</th><th>Absent</th><th>Remarks</th></tr>'+pupils.map((x,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapePrimaryHTML(x.adm)+'</td><td>'+escapePrimaryHTML(x.name)+'</td><td>'+(att&&att[x.adm]===true?'✓':'')+'</td><td>'+(att&&att[x.adm]===false?'✓':'')+'</td><td></td></tr>').join('')+'</table>';}
+else if(type==='admission'){const pupil=getData('students',[]).find(x=>x.adm===pd_pupil.value);if(!pupil)return alert('Select a pupil first.');content='<p>Dear Parent/Guardian of <b>'+escapePrimaryHTML(pupil.name)+'</b>,</p><p>We are pleased to offer admission to <b>'+escapePrimaryHTML(pupil.name)+'</b> in <b>'+escapePrimaryHTML(cls)+'</b> for '+escapePrimaryHTML(year)+'.</p><p>Admission Number: '+escapePrimaryHTML(pupil.adm)+'</p>'+body+'<p>Yours faithfully,<br><br>_________________________<br>Headteacher</p>';}
+else if(type==='worksheet'){content=primarySheetHTML();}
+else {content='<p><b>Date:</b> '+escapePrimaryHTML(date)+'</p><h2>'+escapePrimaryHTML(pd_title.value||'SCHOOL CIRCULAR')+'</h2>'+body+'<p>_________________________<br>Headteacher / School Management</p>';}
+const badge=school.badge?'<img src="'+school.badge+'" style="width:22mm;height:22mm;object-fit:contain">':'';pd_output.innerHTML='<article class="primary-document-paper"><header style="display:flex;align-items:center;gap:12px;border-bottom:2px solid #222;padding-bottom:8px;text-align:center">'+badge+'<div style="flex:1"><h2 style="margin:0">'+escapePrimaryHTML(school.name||'FEAVIAL PRIMARY SCHOOL')+'</h2><p>'+escapePrimaryHTML(school.box||'')+'<br>'+escapePrimaryHTML(school.dist||'')+'</p><b>'+escapePrimaryHTML(school.motto||'')+'</b></div></header><h2 style="text-align:center">'+escapePrimaryHTML(pd_title.value||'')+'</h2>'+content+'</article>';logAction('Generated primary school document: '+type);}
+function printPrimaryDocument(){if(!pd_output.innerHTML.trim())generatePrimaryDocument();document.body.classList.add('print-primary-doc');window.print();setTimeout(()=>document.body.classList.remove('print-primary-doc'),500);}
+let primarySheetRows=8,primarySheetCols=6;
+function renderPrimarySheet(){let html='<table class="primary-sheet"><thead><tr><th></th>'+Array.from({length:primarySheetCols},(_,i)=>'<th>'+(i+1)+'</th>').join('')+'</tr></thead><tbody>';for(let r=1;r<=primarySheetRows;r++){html+='<tr><th>'+r+'</th>';for(let c=0;c<primarySheetCols;c++){let id='ps_'+r+'_'+c;html+='<td contenteditable="true" id="'+id+'"></td>'; }html+='</tr>';}document.getElementById('primarySheetWrap').innerHTML=html+'</tbody></table>';}
+function addPrimarySheetRow(){const old={};for(let r=1;r<=primarySheetRows;r++)for(let c=0;c<primarySheetCols;c++)old[r+'_'+c]=primaryCellVal(r,c);primarySheetRows++;renderPrimarySheet();Object.entries(old).forEach(([k,v])=>{const e=document.getElementById('ps_'+k.replace('_','_'));if(e)e.innerText=v;});}
+function primaryCellVal(r,c){const e=document.getElementById('ps_'+r+'_'+c);return e?e.innerText.trim():'';}
+function primaryColIndex(s){return s.toUpperCase().charCodeAt(0)-65;}
+function primaryRangeVals(range){const m=range.match(/^([A-F])(\d+):([A-F])(\d+)$/i);if(!m)return[];let c1=primaryColIndex(m[1]),r1=+m[2],c2=primaryColIndex(m[3]),r2=+m[4],v=[];for(let r=Math.min(r1,r2);r<=Math.min(r2,primarySheetRows);r++){for(let c=Math.min(c1,c2);c<=Math.min(c2,primarySheetCols-1);c++){const raw=primaryCellVal(r,c);if(raw!=='')v.push(Number(raw));}}return v.filter(Number.isFinite);}
+function safePrimaryArithmetic(expr){
+ const tokens=expr.match(/\d+(?:\.\d+)?|[()+\-*/]/g)||[];
+ if(tokens.join('')!==expr.replace(/\s+/g,''))return '#ERROR';
+ let pos=0;
+ function atom(){let t=tokens[pos++];if(t==='('){let v=add();if(tokens[pos++]!==')')throw Error('paren');return v;}if(t==='-')return -atom();if(t==='+')return atom();const n=Number(t);if(!Number.isFinite(n))throw Error('number');return n;}
+ function mul(){let v=atom();while(tokens[pos]==='*'||tokens[pos]==='/'){let op=tokens[pos++],n=atom();v=op==='*'?v*n:v/n;}return v;}
+ function add(){let v=mul();while(tokens[pos]==='+'||tokens[pos]==='-'){let op=tokens[pos++],n=mul();v=op==='+'?v+n:v-n;}return v;}
+ try{const v=add();return pos===tokens.length&&Number.isFinite(v)?v:'#ERROR';}catch{return '#ERROR';}
+}
+function recalcPrimarySheet(){
+ for(let r=1;r<=primarySheetRows;r++)for(let c=0;c<primarySheetCols;c++){
+  const e=document.getElementById('ps_'+r+'_'+c);if(!e)continue;
+  const f=e.innerText.trim();if(!f.startsWith('='))continue;let result='';
+  const m=f.match(/^=(SUM|AVERAGE|COUNT|MIN|MAX)\(([A-F]\d+:[A-F]\d+)\)$/i);
+  if(m){let a=primaryRangeVals(m[2]);switch(m[1].toUpperCase()){case'SUM':result=a.reduce((x,y)=>x+y,0);break;case'AVERAGE':result=a.length?a.reduce((x,y)=>x+y,0)/a.length:0;break;case'COUNT':result=a.length;break;case'MIN':result=a.length?Math.min(...a):0;break;case'MAX':result=a.length?Math.max(...a):0;break;}}
+  else result=safePrimaryArithmetic(f.slice(1));
+  e.dataset.result=String(result);
+ }
+}
+function primarySheetHTML(){recalcPrimarySheet();let html='<table><tr><th></th>'+Array.from({length:primarySheetCols},(_,i)=>'<th>'+(i+1)+'</th>').join('')+'</tr>';for(let r=1;r<=primarySheetRows;r++){html+='<tr><th>'+r+'</th>';for(let c=0;c<primarySheetCols;c++){const e=document.getElementById('ps_'+r+'_'+c);html+='<td>'+escapePrimaryHTML(e?.dataset.result||e?.innerText||'')+'</td>';}html+='</tr>';}return html+'</table>';}
+function insertPrimarySheetInDoc(){pd_type.value='worksheet';pd_body.innerHTML=primarySheetHTML();generatePrimaryDocument();}
+
+function loadAll(){
+  if(getData('subjects',[]).length===0) prefillSubjectsPrimary();
+  updateSchoolDisplay();loadPrimaryReportDesign();renderStudents();renderSubjects();renderStaff();
+  loadSubjectSelects();loadReportStudents();toggleClassTeacherBox();
+  updateBackupInfo();renderAudit();renderCharts();loadRequirements();
+  let marks=getData('marks',{});
+  if(getData('students',[]).filter(s=>s.class===m_class.value).length)loadMarksTable();
+  loadFeesTable();loadAttendanceTable();updateFeesSummary();
+}
+if(LS.getItem('logged')==='1'){
+  loadAll();
+}
+</script>
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js');
+}
+</script>
+</body>
+</html>
+<script>/* grading editor bootstrap */
+document.addEventListener('DOMContentLoaded',()=>{renderGradingEditor();refreshGradingDisplay();});
+</script>
